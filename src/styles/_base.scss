@@ -1,0 +1,252 @@
+// Reset ligero y estilos base de elementos.
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--bv-font-sans);
+  font-size: var(--bv-text-base);
+  line-height: 1.55;
+  color: var(--bv-text);
+  background-color: var(--bv-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+h1 {
+  font-size: var(--bv-text-2xl);
+}
+
+h2 {
+  font-size: var(--bv-text-xl);
+}
+
+h3 {
+  font-size: var(--bv-text-lg);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--bv-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Anillo de foco visible solo por teclado, en todos los elementos interactivos.
+:focus-visible {
+  outline: 2px solid var(--bv-primary);
+  outline-offset: 2px;
+}
+
+// --- Utilidades de maquetación -------------------------------------------
+.bv-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--bv-space-4);
+}
+
+.bv-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--bv-space-3);
+}
+
+// --- Componentes de estilo global ----------------------------------------
+// Los componentes de Angular reutilizan estas clases en lugar de duplicar
+// estilos, lo que mantiene sus hojas por debajo del presupuesto
+// `anyComponentStyle` definido en angular.json.
+
+.bv-card {
+  padding: var(--bv-space-5);
+  background: var(--bv-surface);
+  border: 1px solid var(--bv-border);
+  border-radius: var(--bv-radius-lg);
+  box-shadow: var(--bv-shadow-sm);
+}
+
+.bv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bv-space-2);
+  padding: 0.55rem 1rem;
+  font: inherit;
+  font-weight: 550;
+  line-height: 1.2;
+  color: var(--bv-primary-contrast);
+  cursor: pointer;
+  background: var(--bv-primary);
+  border: 1px solid transparent;
+  border-radius: var(--bv-radius);
+  transition:
+    background-color var(--bv-transition),
+    border-color var(--bv-transition);
+
+  &:hover:not(:disabled) {
+    background: var(--bv-primary-hover);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--bv-primary-active);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  &.bv-btn--secondary {
+    color: var(--bv-text);
+    background: var(--bv-surface);
+    border-color: var(--bv-border-strong);
+
+    &:hover:not(:disabled) {
+      background: var(--bv-surface-alt);
+    }
+  }
+
+  &.bv-btn--danger {
+    background: var(--bv-danger);
+
+    &:hover:not(:disabled) {
+      background: var(--bv-danger-hover);
+    }
+  }
+
+  &.bv-btn--ghost {
+    color: var(--bv-primary);
+    background: transparent;
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      background: var(--bv-primary-soft);
+    }
+  }
+
+  &.bv-btn--sm {
+    padding: 0.35rem 0.7rem;
+    font-size: var(--bv-text-sm);
+  }
+}
+
+.bv-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  font-size: var(--bv-text-xs);
+  font-weight: 600;
+  color: var(--bv-info);
+  background: var(--bv-info-soft);
+  border-radius: var(--bv-radius-full);
+
+  &.bv-badge--success {
+    color: var(--bv-success);
+    background: var(--bv-success-soft);
+  }
+
+  &.bv-badge--warning {
+    color: var(--bv-warning);
+    background: var(--bv-warning-soft);
+  }
+
+  &.bv-badge--danger {
+    color: var(--bv-danger);
+    background: var(--bv-danger-soft);
+  }
+
+  &.bv-badge--neutral {
+    color: var(--bv-text-muted);
+    background: var(--bv-surface-alt);
+  }
+}
+
+.bv-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bv-space-1);
+
+  > label {
+    font-size: var(--bv-text-sm);
+    font-weight: 600;
+    color: var(--bv-text-muted);
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 0.55rem 0.7rem;
+    font: inherit;
+    color: var(--bv-text);
+    background: var(--bv-surface);
+    border: 1px solid var(--bv-border-strong);
+    border-radius: var(--bv-radius);
+
+    &:focus-visible {
+      border-color: var(--bv-primary);
+    }
+
+    &:disabled {
+      background: var(--bv-surface-alt);
+      cursor: not-allowed;
+    }
+  }
+
+  textarea {
+    min-height: 6rem;
+    resize: vertical;
+  }
+}
+
+.bv-alert {
+  padding: var(--bv-space-3) var(--bv-space-4);
+  font-size: var(--bv-text-sm);
+  border: 1px solid;
+  border-radius: var(--bv-radius);
+
+  &.bv-alert--error {
+    color: var(--bv-danger);
+    background: var(--bv-danger-soft);
+    border-color: color-mix(in srgb, var(--bv-danger) 25%, transparent);
+  }
+
+  &.bv-alert--info {
+    color: var(--bv-info);
+    background: var(--bv-info-soft);
+    border-color: color-mix(in srgb, var(--bv-info) 25%, transparent);
+  }
+
+  ul {
+    padding-left: 1.1rem;
+    margin: var(--bv-space-2) 0 0;
+  }
+}
+
+.bv-muted {
+  color: var(--bv-text-muted);
+}

@@ -1,0 +1,17 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bv-space-2);
+  padding: var(--bv-space-7) var(--bv-space-4);
+  text-align: center;
+}
+
+.empty__title {
+  font-weight: 600;
+}
+
+.empty__description {
+  max-width: 44ch;
+  color: var(--bv-text-muted);
+}

@@ -1,0 +1,69 @@
+.roulette {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bv-space-4);
+  margin-bottom: var(--bv-space-6);
+  text-align: center;
+}
+
+.roulette__wheel {
+  display: grid;
+  place-items: center;
+  width: 9rem;
+  height: 9rem;
+  background: conic-gradient(
+    var(--bv-primary) 0deg 45deg,
+    var(--bv-primary-active) 45deg 90deg,
+    var(--bv-primary) 90deg 135deg,
+    var(--bv-primary-active) 135deg 180deg,
+    var(--bv-primary) 180deg 225deg,
+    var(--bv-primary-active) 225deg 270deg,
+    var(--bv-primary) 270deg 315deg,
+    var(--bv-primary-active) 315deg 360deg
+  );
+  border-radius: var(--bv-radius-full);
+  box-shadow: var(--bv-shadow-lg);
+}
+
+.roulette__wheel--spinning {
+  animation: rotate 900ms linear infinite;
+}
+
+.roulette__glyph {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: var(--bv-text-xl);
+  font-weight: 700;
+  color: var(--bv-primary);
+  background: var(--bv-surface);
+  border-radius: var(--bv-radius-full);
+}
+
+.roulette__note {
+  max-width: 40ch;
+  font-size: var(--bv-text-sm);
+}
+
+.result {
+  text-align: center;
+
+  h2 {
+    margin: var(--bv-space-2) 0;
+    font-size: var(--bv-text-xl);
+  }
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roulette__wheel--spinning {
+    animation: none;
+  }
+}

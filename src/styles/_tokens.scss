@@ -1,0 +1,73 @@
+// Tokens de diseño de la Biblioteca Virtual.
+//
+// Se exponen como CSS custom properties (y no como variables SCSS) para que:
+//  1. Cualquier hoja de estilos pueda usarlos, incluidos los estilos de componentes.
+//  2. Sean cambiables en tiempo de ejecución, por ejemplo para un tema oscuro.
+//
+// Los nombres con prefijo `--bv-*` evitan colisiones con los tokens internos de
+// Angular Material o de librerías de terceros.
+
+:root {
+  // --- Marca --------------------------------------------------------------
+  --bv-primary: #4f46e5;
+  --bv-primary-hover: #4338ca;
+  --bv-primary-active: #3730a3;
+  --bv-primary-soft: #eef2ff;
+  --bv-primary-contrast: #ffffff;
+
+  // --- Semánticos ---------------------------------------------------------
+  --bv-success: #047857;
+  --bv-success-soft: #ecfdf5;
+  --bv-warning: #b45309;
+  --bv-warning-soft: #fffbeb;
+  --bv-danger: #b91c1c;
+  --bv-danger-hover: #991b1b;
+  --bv-danger-soft: #fef2f2;
+  --bv-info: #0369a1;
+  --bv-info-soft: #f0f9ff;
+
+  // --- Neutros ------------------------------------------------------------
+  --bv-bg: #f8fafc;
+  --bv-surface: #ffffff;
+  --bv-surface-alt: #f1f5f9;
+  --bv-border: #e2e8f0;
+  --bv-border-strong: #cbd5e1;
+  --bv-text: #0f172a;
+  --bv-text-muted: #64748b;
+  --bv-text-subtle: #94a3b8;
+
+  // --- Tipografía ---------------------------------------------------------
+  --bv-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --bv-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --bv-text-xs: 0.75rem;
+  --bv-text-sm: 0.875rem;
+  --bv-text-base: 1rem;
+  --bv-text-lg: 1.125rem;
+  --bv-text-xl: 1.375rem;
+  --bv-text-2xl: 1.75rem;
+
+  // --- Espaciado (base 4px) ----------------------------------------------
+  --bv-space-1: 0.25rem;
+  --bv-space-2: 0.5rem;
+  --bv-space-3: 0.75rem;
+  --bv-space-4: 1rem;
+  --bv-space-5: 1.5rem;
+  --bv-space-6: 2rem;
+  --bv-space-7: 3rem;
+
+  // --- Formas -------------------------------------------------------------
+  --bv-radius-sm: 4px;
+  --bv-radius: 8px;
+  --bv-radius-lg: 12px;
+  --bv-radius-full: 999px;
+
+  --bv-shadow-sm: 0 1px 2px rgb(15 23 42 / 8%);
+  --bv-shadow-lg: 0 10px 25px rgb(15 23 42 / 12%);
+
+  // --- Capas --------------------------------------------------------------
+  --bv-z-header: 100;
+
+  // --- Transiciones -------------------------------------------------------
+  --bv-transition: 150ms ease;
+}

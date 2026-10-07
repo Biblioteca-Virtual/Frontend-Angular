@@ -1,0 +1,33 @@
+<header class="topbar">
+  <a class="brand" routerLink="/">
+    <span class="brand__mark" aria-hidden="true">BV</span>
+    <span class="brand__name">Biblioteca Virtual</span>
+  </a>
+
+  <nav class="nav" aria-label="Navegación principal">
+    <a class="nav__link" routerLink="/libros" routerLinkActive="nav__link--active">Libros</a>
+    <a class="nav__link" routerLink="/prestamos" routerLinkActive="nav__link--active">
+      Mis préstamos
+    </a>
+    <a class="nav__link" routerLink="/resenas" routerLinkActive="nav__link--active">Reseñas</a>
+    <a class="nav__link" routerLink="/ruleta" routerLinkActive="nav__link--active">Ruleta</a>
+  </nav>
+
+  <div class="session">
+    @if (auth.isLoggedIn()) {
+      <span class="session__user" [title]="auth.user()?.email ?? ''">
+        {{ auth.displayName() }}
+      </span>
+      <button type="button" class="bv-btn bv-btn--secondary bv-btn--sm" (click)="logout()">
+        Cerrar sesión
+      </button>
+    } @else {
+      <a routerLink="/login" class="bv-btn bv-btn--sm">Iniciar sesión</a>
+      <a routerLink="/registro" class="bv-btn bv-btn--ghost bv-btn--sm">Crear cuenta</a>
+    }
+  </div>
+</header>
+
+<main class="content bv-container">
+  <router-outlet />
+</main>

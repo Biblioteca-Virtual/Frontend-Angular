@@ -1,0 +1,24 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bv-space-4);
+  max-width: 44rem;
+}
+
+.form__row {
+  display: grid;
+  gap: var(--bv-space-4);
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.form__actions {
+  margin-top: var(--bv-space-2);
+}
+
+code {
+  padding: 0 0.25rem;
+  font-family: var(--bv-font-mono);
+  font-size: 0.9em;
+  background: var(--bv-surface-alt);
+  border-radius: var(--bv-radius-sm);
+}

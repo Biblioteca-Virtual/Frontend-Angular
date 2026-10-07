@@ -1,0 +1,115 @@
+@if (state.isInitialLoading()) {
+  <bv-spinner label="Cargando libro…" />
+} @else {
+  <bv-error-banner [error]="state.error()" />
+
+  @if (state.data(); as book) {
+    <div class="bv-row detail__top">
+      <a class="bv-btn bv-btn--ghost bv-btn--sm" routerLink="/libros">← Volver al catálogo</a>
+    </div>
+
+    <div class="detail">
+      <header class="detail__header">
+        <h1>{{ book.titulo }}</h1>
+
+        <p class="detail__authors">
+          @if (book.autores.length > 0) {
+            @for (author of book.autores; track author.id; let last = $last) {
+              {{ author | autorNombre }}
+              @if (!last) {
+                <span>, </span>
+              }
+            }
+          } @else {
+            <span class="bv-muted">Autor desconocido</span>
+          }
+        </p>
+
+        <div class="bv-row detail__badges">
+          @if (book.categoria.nombre; as category) {
+            <span class="bv-badge bv-badge--neutral">{{ category }}</span>
+          }
+          <span class="bv-badge" [class.bv-badge--success]="book.cantidad > 0">
+            {{ book.cantidad > 0 ? book.cantidad + ' copias disponibles' : 'Sin copias' }}
+          </span>
+          @if (book.isbn; as isbn) {
+            <span class="bv-badge">ISBN {{ isbn }}</span>
+          }
+          @if (book.anio_publicacion; as year) {
+            <span class="bv-badge bv-badge--neutral">{{ year }}</span>
+          }
+        </div>
+      </header>
+
+      <div class="detail__body">
+        <section>
+          <h2>Descripción</h2>
+          @if (book.descripcion) {
+            <p>{{ book.descripcion }}</p>
+          } @else {
+            <p class="bv-muted">Este libro no tiene descripción.</p>
+          }
+        </section>
+
+        <section class="detail__actions">
+          <h2>Acciones</h2>
+          <div class="bv-row">
+            <a class="bv-btn bv-btn--sm" [routerLink]="['/libros', book.id, 'editar']"> Editar </a>
+            <button
+              type="button"
+              class="bv-btn bv-btn--danger bv-btn--sm"
+              [disabled]="deleting()"
+              (click)="remove()"
+            >
+              {{ deleting() ? 'Eliminando…' : 'Eliminar' }}
+            </button>
+          </div>
+
+          <bv-error-banner [error]="actionError()" />
+
+          @if (book.cantidad === 0) {
+            <p class="bv-muted">No se puede pedir este libro hasta aumentar sus copias.</p>
+          }
+        </section>
+      </div>
+    </div>
+
+    <section class="bv-card reviews">
+      <h2>Reseñas</h2>
+
+      @if (averageRating(); as average) {
+        <p class="bv-muted">
+          {{ average.toFixed(1) }} / 5 · {{ reviews().length }}
+          {{ reviews().length === 1 ? 'reseña' : 'reseñas' }}
+        </p>
+      }
+
+      @if (reviews().length === 0) {
+        <bv-empty-state
+          title="Sin reseñas todavía"
+          description="Las reseñas que escriban los demás lectores aparecerán aquí."
+        />
+      } @else {
+        <ul class="reviews__list">
+          @for (review of reviews(); track review.id) {
+            <li class="reviews__item">
+              <div class="reviews__head">
+                <strong>{{ review.usuario ?? 'Usuario desconocido' }}</strong>
+                <span
+                  class="reviews__stars"
+                  [attr.aria-label]="'Calificación: ' + review.calificacion"
+                >
+                  {{ stars(review.calificacion) }}
+                </span>
+              </div>
+              @if (review.comentario) {
+                <p>{{ review.comentario }}</p>
+              }
+              <small class="bv-muted">{{ review.fecha_creacion | bvDate }}</small>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+}

@@ -1,0 +1,73 @@
+<bv-page-header
+  [title]="isEditing() ? 'Editar libro' : 'Añadir libro'"
+  subtitle="Los campos marcados son obligatorios."
+/>
+
+<bv-error-banner [error]="error()" />
+
+@if (loading()) {
+  <bv-spinner label="Cargando libro…" />
+} @else {
+  <form class="bv-card form" (ngSubmit)="submit()" novalidate>
+    <div class="bv-field">
+      <label for="titulo">Título *</label>
+      <input id="titulo" name="titulo" type="text" [(ngModel)]="form.titulo" required />
+    </div>
+
+    <div class="form__row">
+      <div class="bv-field">
+        <label for="isbn">ISBN</label>
+        <input id="isbn" name="isbn" type="text" [(ngModel)]="form.isbn" />
+        <small class="bv-muted">Único en la base de datos. Repetirlo devuelve 409.</small>
+      </div>
+
+      <div class="bv-field">
+        <label for="anio">Año de publicación</label>
+        <input id="anio" name="anio" type="number" min="1" [(ngModel)]="form.anio_publicacion" />
+      </div>
+    </div>
+
+    <div class="form__row">
+      <div class="bv-field">
+        <label for="categoria">ID de categoría *</label>
+        <input
+          id="categoria"
+          name="categoria"
+          type="number"
+          min="1"
+          [(ngModel)]="form.categoria_id"
+          required
+        />
+        <small class="bv-muted">
+          El backend no expone un endpoint de categorías; consulta la tabla
+          <code>categorias</code>.
+        </small>
+      </div>
+
+      <div class="bv-field">
+        <label for="cantidad">Copias *</label>
+        <input
+          id="cantidad"
+          name="cantidad"
+          type="number"
+          min="0"
+          [(ngModel)]="form.cantidad"
+          required
+        />
+        <small class="bv-muted">Nº de préstamos simultáneos que permite.</small>
+      </div>
+    </div>
+
+    <div class="bv-field">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" name="descripcion" [(ngModel)]="form.descripcion"></textarea>
+    </div>
+
+    <div class="bv-row form__actions">
+      <button type="submit" class="bv-btn" [disabled]="submitting()">
+        {{ submitting() ? 'Guardando…' : 'Guardar' }}
+      </button>
+      <a class="bv-btn bv-btn--ghost" routerLink="/libros">Cancelar</a>
+    </div>
+  </form>
+}
