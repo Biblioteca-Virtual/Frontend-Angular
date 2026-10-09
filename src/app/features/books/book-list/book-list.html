@@ -1,0 +1,69 @@
+<bv-page-header title="Catálogo de libros" subtitle="Explora el fondo disponible en la biblioteca.">
+  <div bvPageActions>
+    <a class="bv-btn bv-btn--sm" routerLink="/libros/nuevo">Añadir libro</a>
+  </div>
+</bv-page-header>
+
+<div class="bv-field search">
+  <label for="search">Buscar por título</label>
+  <input
+    id="search"
+    type="search"
+    placeholder="El nombre de la rosa…"
+    [value]="search()"
+    (input)="onSearch(searchInput.value)"
+    #searchInput
+  />
+  <small class="bv-muted">
+    La búsqueda del backend solo mira el <strong>título</strong>, aunque la documentación OpenAPI
+    sugiera ISBN, autor y descripción.
+  </small>
+</div>
+
+<bv-error-banner [error]="state.error()" />
+
+@if (state.isInitialLoading()) {
+  <bv-spinner label="Cargando catálogo…" />
+} @else {
+  @if (state.data(); as books) {
+    @if (books.length === 0) {
+      <bv-empty-state
+        title="No hay libros que coincidan"
+        [description]="
+          search().trim()
+            ? 'Prueba con otro título o limpia el buscador.'
+            : 'El catálogo está vacío. Añade el primer libro para empezar.'
+        "
+      />
+    } @else {
+      <p class="bv-muted count">{{ books.length }} {{ books.length === 1 ? 'libro' : 'libros' }}</p>
+
+      <ul class="grid">
+        @for (book of books; track trackBook($index, book)) {
+          <li class="bv-card card">
+            <a class="card__link" [routerLink]="['/libros', book.id]">
+              <h3 class="card__title">{{ book.titulo }}</h3>
+            </a>
+
+            <p class="card__authors">
+              @if (book.autores.length > 0) {
+                {{ book.autores | autorNombre }}
+              } @else {
+                <span class="bv-muted">Autor desconocido</span>
+              }
+            </p>
+
+            <div class="bv-row card__meta">
+              @if (book.categoria.nombre; as category) {
+                <span class="bv-badge bv-badge--neutral">{{ category }}</span>
+              }
+              <span class="bv-badge" [class.bv-badge--success]="book.cantidad > 0">
+                {{ book.cantidad > 0 ? book.cantidad + ' copias' : 'Sin copias' }}
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  }
+}

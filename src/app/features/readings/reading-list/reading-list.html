@@ -1,0 +1,95 @@
+<bv-page-header
+  title="Mis préstamos"
+  subtitle="Los préstamos se devuelven de forma explícita: llegar al 100 % no los cierra."
+>
+  <div bvPageActions class="bv-row">
+    @for (option of filters; track option.value) {
+      <button
+        type="button"
+        class="bv-btn bv-btn--sm"
+        [class.bv-btn--secondary]="filter() !== option.value"
+        (click)="setFilter(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+</bv-page-header>
+
+<bv-error-banner [error]="state.error()" />
+<bv-error-banner [error]="actionError()" />
+
+@if (state.isInitialLoading()) {
+  <bv-spinner label="Cargando préstamos…" />
+} @else if (visible().length === 0) {
+  <bv-empty-state
+    title="No hay préstamos que mostrar"
+    description="Pide un libro desde el catálogo o gira la ruleta para recibir uno al azar."
+  >
+    <a class="bv-btn bv-btn--sm" routerLink="/libros">Ir al catálogo</a>
+  </bv-empty-state>
+} @else {
+  <ul class="list">
+    @for (reading of visible(); track reading.id) {
+      <li class="bv-card item">
+        <div class="item__head">
+          <a class="item__title" [routerLink]="['/libros', reading.libro_id]">
+            {{ reading.libro_titulo }}
+          </a>
+          <span
+            class="bv-badge"
+            [class.bv-badge--success]="reading.estado === 'activo'"
+            [class.bv-badge--neutral]="reading.estado === 'devuelto'"
+          >
+            {{ reading.estado === 'activo' ? 'En préstamo' : 'Devuelto' }}
+          </span>
+        </div>
+
+        <div
+          class="progress"
+          role="group"
+          [attr.aria-label]="'Progreso de lectura de ' + reading.libro_titulo"
+        >
+          <div class="progress__track">
+            <div class="progress__fill" [style.width.%]="reading.progreso"></div>
+          </div>
+          <span class="progress__value">{{ reading.progreso }} %</span>
+        </div>
+
+        <dl class="item__dates">
+          <div>
+            <dt>Prestado</dt>
+            <dd>{{ reading.fecha_prestamo | bvDate: 'datetime' }}</dd>
+          </div>
+          @if (reading.fecha_devolucion) {
+            <div>
+              <dt>Devuelto</dt>
+              <dd>{{ reading.fecha_devolucion | bvDate: 'datetime' }}</dd>
+            </div>
+          }
+        </dl>
+
+        <div class="bv-row item__actions">
+          @if (reading.estado === 'activo') {
+            <button
+              type="button"
+              class="bv-btn bv-btn--secondary bv-btn--sm"
+              [disabled]="isPending(reading.id)"
+              (click)="returnBook(reading)"
+            >
+              {{ isPending(reading.id) ? 'Actualizando…' : 'Devolver' }}
+            </button>
+            <button
+              type="button"
+              class="bv-btn bv-btn--ghost bv-btn--sm"
+              [disabled]="isPending(reading.id)"
+              (click)="updateProgress(reading, 100)"
+            >
+              Marcar leído
+            </button>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}

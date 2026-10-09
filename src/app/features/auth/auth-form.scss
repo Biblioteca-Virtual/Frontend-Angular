@@ -1,0 +1,49 @@
+// Estilos compartidos por las pantallas de autenticacion. Ambos componentes
+// referencian la misma hoja para no duplicar el flexbox ni el centrado.
+
+.auth {
+  display: grid;
+  place-items: center;
+  padding-block: var(--bv-space-6);
+}
+
+.auth__panel {
+  width: 100%;
+  max-width: 26rem;
+
+  h1 {
+    margin-bottom: var(--bv-space-1);
+  }
+}
+
+.auth__hint {
+  margin-bottom: var(--bv-space-5);
+  font-size: var(--bv-text-sm);
+}
+
+.auth__panel form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bv-space-4);
+  margin-top: var(--bv-space-4);
+}
+
+// El banner de error se coloca justo antes del formulario.
+.auth__panel bv-error-banner {
+  display: block;
+}
+
+.auth__submit {
+  margin-top: var(--bv-space-2);
+}
+
+.auth__hint-error {
+  font-size: var(--bv-text-xs);
+  color: var(--bv-danger);
+}
+
+.auth__footer {
+  margin-top: var(--bv-space-5);
+  font-size: var(--bv-text-sm);
+  text-align: center;
+}

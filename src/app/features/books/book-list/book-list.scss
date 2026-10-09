@@ -1,0 +1,51 @@
+.search {
+  max-width: 32rem;
+  margin-bottom: var(--bv-space-5);
+}
+
+.count {
+  margin-bottom: var(--bv-space-3);
+  font-size: var(--bv-text-sm);
+}
+
+.grid {
+  display: grid;
+  gap: var(--bv-space-4);
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bv-space-2);
+}
+
+.card__link {
+  color: inherit;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:hover .card__title {
+    color: var(--bv-primary);
+  }
+}
+
+.card__title {
+  font-size: var(--bv-text-base);
+  transition: color var(--bv-transition);
+}
+
+.card__authors {
+  flex: 1;
+  font-size: var(--bv-text-sm);
+  color: var(--bv-text-muted);
+}
+
+.card__meta {
+  gap: var(--bv-space-2);
+}

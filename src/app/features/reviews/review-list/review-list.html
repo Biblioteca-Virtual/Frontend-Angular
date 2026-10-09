@@ -1,0 +1,80 @@
+<bv-page-header
+  title="Reseñas"
+  subtitle="Las reseñas son públicas: puedes ver y valorar las de cualquier lector."
+/>
+
+<section class="bv-card draft">
+  <h2>Escribir una reseña</h2>
+  <p class="bv-muted draft__hint">
+    Solo una reseña por libro y usuario. El backend no expone un listado de categorías, así que
+    indica el ID numérico del libro.
+  </p>
+
+  <bv-error-banner [error]="actionError()" />
+
+  <form class="draft__form" (ngSubmit)="submit()" novalidate>
+    <div class="bv-field">
+      <label for="libro">ID del libro *</label>
+      <input id="libro" name="libro" type="number" min="1" [(ngModel)]="draft.libro_id" required />
+    </div>
+
+    <div class="bv-field">
+      <label for="calificacion">Calificación *</label>
+      <select id="calificacion" name="calificacion" [(ngModel)]="draft.calificacion">
+        @for (rating of ratings; track rating) {
+          <option [ngValue]="rating">{{ rating }} / 5</option>
+        }
+      </select>
+    </div>
+
+    <div class="bv-field">
+      <label for="comentario">Comentario</label>
+      <textarea id="comentario" name="comentario" [(ngModel)]="draft.comentario"></textarea>
+    </div>
+
+    <button type="submit" class="bv-btn" [disabled]="submitting()">
+      {{ submitting() ? 'Publicando…' : 'Publicar reseña' }}
+    </button>
+  </form>
+</section>
+
+@if (state.isInitialLoading()) {
+  <bv-spinner label="Cargando reseñas…" />
+} @else if ((state.data() ?? []).length === 0) {
+  <bv-empty-state
+    title="Todavía no hay reseñas"
+    description="Sé la primera persona en valorar un libro."
+  />
+} @else {
+  <ul class="list">
+    @for (review of state.data(); track review.id) {
+      <li class="bv-card item">
+        <div class="item__head">
+          <a class="item__book" [routerLink]="['/libros', review.libro_id]">
+            {{ review.libro_titulo }}
+          </a>
+          <span class="stars" [attr.aria-label]="'Calificación: ' + review.calificacion">
+            {{ stars(review.calificacion) }}
+          </span>
+        </div>
+
+        <p class="item__author">
+          {{ review.usuario ?? 'Usuario desconocido' }} · {{ review.fecha_creacion | bvDate }}
+        </p>
+
+        @if (review.comentario) {
+          <p class="item__comment">{{ review.comentario }}</p>
+        }
+
+        @if (isMine(review)) {
+          <div class="bv-row item__actions">
+            <span class="bv-badge bv-badge--neutral">Tu reseña</span>
+            <button type="button" class="bv-btn bv-btn--danger bv-btn--sm" (click)="remove(review)">
+              Eliminar
+            </button>
+          </div>
+        }
+      </li>
+    }
+  </ul>
+}
