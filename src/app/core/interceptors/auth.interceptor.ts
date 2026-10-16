@@ -13,7 +13,7 @@ import { TokenStorageService } from '@core/services/token-storage.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // El propio backend devuelve 401 si se manda un Authorization invalido, asi
   // que comprobarlo aqui evita un 401 espurio en cada recarga de la pagina.
-  if (!req.url.startsWith('/api/') || !isProtected(req.url)) {
+  if (!req.url.includes('/api/') || !isProtected(req.url)) {
     return next(req);
   }
 

@@ -65,6 +65,7 @@ export const API_ENDPOINTS = {
  * registro), que deben poder ejecutarse precisamente cuando no hay sesion.
  */
 export const PROTECTED_PATHS: readonly string[] = [
+  '/api/auth/me',
   '/api/books',
   '/api/readings',
   '/api/reviews',
