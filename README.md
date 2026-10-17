@@ -1,7 +1,8 @@
 <!-- calidad:inicio -->
-![Calidad](https://img.shields.io/badge/Calidad-sin%20c%C3%B3digo-lightgrey)
+![Calidad](https://img.shields.io/badge/Calidad-12%2F100-red) ![Aprobado](https://img.shields.io/badge/Aprobado-NO-red) ![Cumple](https://img.shields.io/badge/Cumple-10%2F15-yellow) ![Duplicación](https://img.shields.io/badge/Duplicaci%C3%B3n-8.5%25-green) ![SEC](https://img.shields.io/badge/SEC-0-green) ![SQL](https://img.shields.io/badge/SQL-0-green) ![DBG](https://img.shields.io/badge/DBG-0-green) ![Capas](https://img.shields.io/badge/Capas-2-green) ![Tests](https://img.shields.io/badge/Tests-3-orange) ![Vistas](https://img.shields.io/badge/Vistas-5-orange)
 
-**Calidad de servicios:** sin código en `main` (no evaluable).
+**Calidad de servicios (heurístico):** índice **12/100** · cumple **10/15** · aprobado **NO** · capas **2**
+Detalle completo en [`docs/EVALUACION.md`](docs/EVALUACION.md).
 <!-- calidad:fin -->
 
 # Frontend Angular — Biblioteca Virtual
