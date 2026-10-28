@@ -1,115 +1,214 @@
-@if (state.isInitialLoading()) {
-  <bv-spinner label="Cargando libro…" />
-} @else {
-  <bv-error-banner [error]="state.error()" />
+<div class="vl-page-layout">
+  <div class="vl-title-row">
+    <h1 class="vl-highlight-title">Libros</h1>
+  </div>
 
-  @if (state.data(); as book) {
-    <div class="bv-row detail__top">
-      <a class="bv-btn bv-btn--ghost bv-btn--sm" routerLink="/libros">← Volver al catálogo</a>
-    </div>
+  @if (state.isInitialLoading()) {
+    <bv-spinner label="Cargando libro…" />
+  } @else {
+    <bv-error-banner [error]="state.error()" />
 
-    <div class="detail">
-      <header class="detail__header">
-        <h1>{{ book.titulo }}</h1>
+    @if (state.data(); as book) {
+      <div class="vl-panel book-detail-panel">
+        <div class="book-detail-grid">
+          <!-- Left Info Column -->
+          <div class="book-detail-info">
+            <a routerLink="/libros" class="vl-back-title">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>Libro {{ book.id }}</span>
+            </a>
 
-        <p class="detail__authors">
-          @if (book.autores.length > 0) {
-            @for (author of book.autores; track author.id; let last = $last) {
-              {{ author | autorNombre }}
-              @if (!last) {
-                <span>, </span>
-              }
-            }
-          } @else {
-            <span class="bv-muted">Autor desconocido</span>
-          }
-        </p>
+            <div class="info-rows">
+              <div class="info-row">
+                <span class="info-label">Título:</span>
+                <span class="info-value info-value--title">{{ book.titulo }}</span>
+              </div>
 
-        <div class="bv-row detail__badges">
-          @if (book.categoria.nombre; as category) {
-            <span class="bv-badge bv-badge--neutral">{{ category }}</span>
-          }
-          <span class="bv-badge" [class.bv-badge--success]="book.cantidad > 0">
-            {{ book.cantidad > 0 ? book.cantidad + ' copias disponibles' : 'Sin copias' }}
-          </span>
-          @if (book.isbn; as isbn) {
-            <span class="bv-badge">ISBN {{ isbn }}</span>
-          }
-          @if (book.anio_publicacion; as year) {
-            <span class="bv-badge bv-badge--neutral">{{ year }}</span>
-          }
-        </div>
-      </header>
+              <!-- Total de páginas -->
+              <div class="info-row">
+                <span class="info-label">Total de páginas:</span>
+                @if (isEditingProgress()) {
+                  <input
+                    type="number"
+                    min="0"
+                    [ngModel]="editPaginasTotales()"
+                    (ngModelChange)="editPaginasTotales.set($event)"
+                    class="inline-pages-input"
+                  />
+                } @else {
+                  <span class="info-value info-value--gold">
+                    ({{ book.paginas_totales || 0 }} páginas)
+                  </span>
+                }
+              </div>
 
-      <div class="detail__body">
-        <section>
-          <h2>Descripción</h2>
-          @if (book.descripcion) {
-            <p>{{ book.descripcion }}</p>
-          } @else {
-            <p class="bv-muted">Este libro no tiene descripción.</p>
-          }
-        </section>
+              <!-- Páginas leídas -->
+              <div class="info-row">
+                <span class="info-label">Páginas Leídas:</span>
+                @if (isEditingProgress()) {
+                  <input
+                    type="number"
+                    min="0"
+                    [ngModel]="editPaginasLeidas()"
+                    (ngModelChange)="editPaginasLeidas.set($event)"
+                    class="inline-pages-input"
+                  />
+                } @else {
+                  <span class="info-value info-value--gold">
+                    ({{ book.paginas_leidas || 0 }} páginas)
+                  </span>
+                }
+              </div>
 
-        <section class="detail__actions">
-          <h2>Acciones</h2>
-          <div class="bv-row">
-            <a class="bv-btn bv-btn--sm" [routerLink]="['/libros', book.id, 'editar']"> Editar </a>
-            <button
-              type="button"
-              class="bv-btn bv-btn--danger bv-btn--sm"
-              [disabled]="deleting()"
-              (click)="remove()"
-            >
-              {{ deleting() ? 'Eliminando…' : 'Eliminar' }}
-            </button>
-          </div>
-
-          <bv-error-banner [error]="actionError()" />
-
-          @if (book.cantidad === 0) {
-            <p class="bv-muted">No se puede pedir este libro hasta aumentar sus copias.</p>
-          }
-        </section>
-      </div>
-    </div>
-
-    <section class="bv-card reviews">
-      <h2>Reseñas</h2>
-
-      @if (averageRating(); as average) {
-        <p class="bv-muted">
-          {{ average.toFixed(1) }} / 5 · {{ reviews().length }}
-          {{ reviews().length === 1 ? 'reseña' : 'reseñas' }}
-        </p>
-      }
-
-      @if (reviews().length === 0) {
-        <bv-empty-state
-          title="Sin reseñas todavía"
-          description="Las reseñas que escriban los demás lectores aparecerán aquí."
-        />
-      } @else {
-        <ul class="reviews__list">
-          @for (review of reviews(); track review.id) {
-            <li class="reviews__item">
-              <div class="reviews__head">
-                <strong>{{ review.usuario ?? 'Usuario desconocido' }}</strong>
-                <span
-                  class="reviews__stars"
-                  [attr.aria-label]="'Calificación: ' + review.calificacion"
-                >
-                  {{ stars(review.calificacion) }}
+              <!-- Porcentaje sacado dinámicamente -->
+              <div class="info-row">
+                <span class="info-label">Porcentaje:</span>
+                <span class="info-value info-value--gold info-value--percentage">
+                  % {{ isEditingProgress() ? previewPercentage() : getPercentage(book) }}
                 </span>
               </div>
-              @if (review.comentario) {
-                <p>{{ review.comentario }}</p>
-              }
-              <small class="bv-muted">{{ review.fecha_creacion | bvDate }}</small>
-            </li>
-          }
-        </ul>
-      }
-    </section>
+
+              <!-- Botones de cambiar páginas / guardar páginas -->
+              <div class="progress-actions">
+                @if (!isEditingProgress()) {
+                  <button type="button" class="btn-progress-toggle" (click)="startEditingProgress(book)">
+                    ✏️ Cambiar páginas leídas / totales
+                  </button>
+                } @else {
+                  <div class="progress-edit-btns">
+                    <button
+                      type="button"
+                      class="btn-progress-save"
+                      [disabled]="savingProgress()"
+                      (click)="saveProgress(book.id)"
+                    >
+                      {{ savingProgress() ? 'Guardando…' : 'Guardar páginas' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-progress-cancel"
+                      [disabled]="savingProgress()"
+                      (click)="cancelEditingProgress()"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Ubicación:</span>
+                <span class="info-value info-value--gold">
+                  (Física · {{ book.cantidad > 0 ? book.cantidad + ' ejemplares' : 'Sin copias' }})
+                </span>
+              </div>
+
+              <div class="info-row">
+                <span class="info-label">Categoría:</span>
+                <span class="info-value info-value--gold">
+                  {{ book.categoria.nombre || 'General' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Wheat Note Box -->
+            <div class="note-box">
+              <div class="note-box__label">Nota / Descripción:</div>
+              <div class="note-box__content">
+                {{ book.descripcion || 'Este libro no cuenta con notas adicionales registradas en el catálogo.' }}
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="book-actions">
+              <a [routerLink]="['/libros', book.id, 'editar']" class="vl-btn-action">
+                Editar libro
+              </a>
+              <button
+                type="button"
+                class="vl-btn-action vl-btn-action--danger"
+                [disabled]="deleting()"
+                (click)="remove()"
+              >
+                {{ deleting() ? 'Eliminando…' : 'Eliminar libro' }}
+              </button>
+            </div>
+
+            <bv-error-banner [error]="actionError()" />
+          </div>
+
+          <!-- Right Book 3D Cover Column -->
+          <div class="book-detail-cover">
+            <div class="cover-heading">
+              <span class="cover-heading__black">Portada del</span>
+              <span class="cover-heading__gold">Libro</span>
+            </div>
+
+            <div class="cover-3d-wrapper">
+              <div class="cover-3d-book">
+                <div class="cover-3d-spine"></div>
+                <div class="cover-3d-front">
+                  @if (getCoverUrl(book.imagen_portada); as coverUrl) {
+                    <img [src]="coverUrl" [alt]="'Portada de ' + book.titulo" class="cover-art-img" />
+                  } @else {
+                    <svg viewBox="0 0 160 210" class="cover-art-svg" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="coverSky" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#bce7fd" />
+                          <stop offset="65%" stop-color="#def3fd" />
+                          <stop offset="100%" stop-color="#9bd458" />
+                        </linearGradient>
+                      </defs>
+                      <rect width="160" height="210" fill="url(#coverSky)" />
+                      <!-- Cloud -->
+                      <circle cx="80" cy="80" r="28" fill="#ffffff" fill-opacity="0.95" />
+                      <circle cx="58" cy="86" r="20" fill="#ffffff" fill-opacity="0.95" />
+                      <circle cx="102" cy="86" r="20" fill="#ffffff" fill-opacity="0.95" />
+                      <!-- Green Hill -->
+                      <path d="M 0 165 Q 80 140 160 165 L 160 210 L 0 210 Z" fill="#6f980e" />
+                    </svg>
+                  }
+                </div>
+                <div class="cover-3d-pages"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="vl-panel reviews-panel">
+        <h2 class="reviews-title">Reseñas de la comunidad</h2>
+
+        @if (averageRating(); as average) {
+          <p class="reviews-rating-summary">
+            Calificación media: <strong>{{ average.toFixed(1) }} / 5</strong> ·
+            {{ reviews().length }} {{ reviews().length === 1 ? 'reseña' : 'reseñas' }}
+          </p>
+        }
+
+        @if (reviews().length === 0) {
+          <bv-empty-state
+            title="Sin reseñas todavía"
+            description="Sé el primero en compartir tu opinión sobre este libro."
+          />
+        } @else {
+          <div class="reviews-list">
+            @for (review of reviews(); track review.id) {
+              <div class="review-item">
+                <div class="review-item__head">
+                  <span class="review-item__user">{{ review.usuario ?? 'Lector anónimo' }}</span>
+                  <span class="review-item__stars">{{ stars(review.calificacion) }}</span>
+                </div>
+                <p class="review-item__text">{{ review.comentario }}</p>
+                <time class="review-item__date">{{ review.fecha_creacion | bvDate }}</time>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
   }
-}
+</div>

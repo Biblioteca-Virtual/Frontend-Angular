@@ -1,6 +1,6 @@
 <bv-page-header
   title="Ruleta"
-  subtitle="Gira y el backend te asigna un libro al azar con un préstamo activo."
+  subtitle="Gira la ruleta para descubrir tu próxima lectura al azar del catálogo."
 />
 
 <div class="roulette">
@@ -13,8 +13,7 @@
   </button>
 
   <p class="bv-muted roulette__note">
-    Cada giro reserva una copia del libro sorteado. Si no queda ninguna libre, el backend responde
-    409 tras reintentar tres veces.
+    El sorteo elegirá un libro de nuestra biblioteca para inspirar tu hábito de lectura.
   </p>
 </div>
 
@@ -22,15 +21,17 @@
 
 @if (spinning()) {
   <bv-spinner label="Buscando un libro…" />
-} @else if (result(); as reading) {
+} @else if (result(); as book) {
   <div class="bv-card result">
     <p class="bv-badge bv-badge--success">¡Te ha tocado!</p>
     <h2>
-      <a [routerLink]="['/libros', reading.libro_id]">{{ reading.libro_titulo }}</a>
+      <a [routerLink]="['/libros', book.id]">{{ book.titulo }}</a>
     </h2>
     <p class="bv-muted">
-      Préstamo creado automáticamente. Ya aparece en
-      <a routerLink="/prestamos">tus préstamos</a>.
+      {{ book.descripcion || 'Descubre este libro en el catálogo.' }}
     </p>
+    <div style="margin-top: 1rem;">
+      <a [routerLink]="['/libros', book.id]" class="bv-btn">Ver detalle del libro</a>
+    </div>
   </div>
 }

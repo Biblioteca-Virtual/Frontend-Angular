@@ -1,33 +1,38 @@
-<header class="topbar">
-  <a class="brand" routerLink="/">
-    <span class="brand__mark" aria-hidden="true">BV</span>
-    <span class="brand__name">Biblioteca Virtual</span>
-  </a>
-
-  <nav class="nav" aria-label="Navegación principal">
-    <a class="nav__link" routerLink="/libros" routerLinkActive="nav__link--active">Libros</a>
-    <a class="nav__link" routerLink="/prestamos" routerLinkActive="nav__link--active">
-      Mis préstamos
+<header class="vl-navbar-wrapper">
+  <nav class="vl-pill-nav" aria-label="Navegación principal">
+    <a
+      class="vl-pill"
+      routerLink="/"
+      routerLinkActive="vl-pill--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Home
     </a>
-    <a class="nav__link" routerLink="/resenas" routerLinkActive="nav__link--active">Reseñas</a>
-    <a class="nav__link" routerLink="/ruleta" routerLinkActive="nav__link--active">Ruleta</a>
-  </nav>
 
-  <div class="session">
-    @if (auth.isLoggedIn()) {
-      <span class="session__user" [title]="auth.user()?.email ?? ''">
-        {{ auth.displayName() }}
-      </span>
-      <button type="button" class="bv-btn bv-btn--secondary bv-btn--sm" (click)="logout()">
-        Cerrar sesión
-      </button>
-    } @else {
-      <a routerLink="/login" class="bv-btn bv-btn--sm">Iniciar sesión</a>
-      <a routerLink="/registro" class="bv-btn bv-btn--ghost bv-btn--sm">Crear cuenta</a>
+    @if (!auth.isLoggedIn()) {
+      <a class="vl-pill" routerLink="/login" routerLinkActive="vl-pill--active">
+        Login
+      </a>
+      <a class="vl-pill" routerLink="/registro" routerLinkActive="vl-pill--active">
+        Registrarse
+      </a>
     }
-  </div>
+
+    <a class="vl-pill" routerLink="/libros" routerLinkActive="vl-pill--active">
+      Biblioteca
+    </a>
+
+    @if (auth.isLoggedIn()) {
+      <a class="vl-pill" routerLink="/ruleta" routerLinkActive="vl-pill--active">
+        Ruleta
+      </a>
+      <button type="button" class="vl-pill vl-pill--btn" (click)="logout()" title="Cerrar sesión">
+        Salir ({{ auth.displayName() || 'Usuario' }})
+      </button>
+    }
+  </nav>
 </header>
 
-<main class="content bv-container">
+<main class="vl-content-container">
   <router-outlet />
 </main>
