@@ -17,63 +17,62 @@ import { authGuard, guestGuard } from '@core/guards/auth.guard';
  */
 export const routes: Routes = [
   {
-    path: 'login',
-    canActivate: [guestGuard],
-    title: 'Iniciar sesión · Biblioteca Virtual',
-    loadComponent: () => import('@features/auth/login/login').then((m) => m.Login),
-  },
-  {
-    path: 'registro',
-    canActivate: [guestGuard],
-    title: 'Crear cuenta · Biblioteca Virtual',
-    loadComponent: () => import('@features/auth/register/register').then((m) => m.Register),
-  },
-  {
     path: '',
-    canActivate: [authGuard],
     loadComponent: () => import('@layout/shell/shell').then((m) => m.Shell),
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'libros' },
+      {
+        path: '',
+        pathMatch: 'full',
+        title: 'Virtual Library · Inicio',
+        loadComponent: () => import('@features/home/home').then((m) => m.Home),
+      },
+      {
+        path: 'login',
+        canActivate: [guestGuard],
+        title: 'Iniciar sesión · Biblioteca Virtual',
+        loadComponent: () => import('@features/auth/login/login').then((m) => m.Login),
+      },
+      {
+        path: 'registro',
+        canActivate: [guestGuard],
+        title: 'Crear cuenta · Biblioteca Virtual',
+        loadComponent: () => import('@features/auth/register/register').then((m) => m.Register),
+      },
       {
         path: 'libros',
+        canActivate: [authGuard],
         title: 'Catálogo · Biblioteca Virtual',
         loadComponent: () => import('@features/books/book-list/book-list').then((m) => m.BookList),
       },
       {
         path: 'libros/nuevo',
+        canActivate: [authGuard],
         title: 'Añadir libro · Biblioteca Virtual',
         loadComponent: () => import('@features/books/book-form/book-form').then((m) => m.BookForm),
       },
       {
-        // El parametro se llama `bookId` y no `id` a proposito: con
-        // `withComponentInputBinding()` el router rellena los inputs del
-        // componente cuyo nombre coincide con el del parametro, y ademas
-        // convierte el valor a `number` porque el input esta declarado como
-        // tal. La URL visible no cambia.
         path: 'libros/:bookId',
+        canActivate: [authGuard],
         title: 'Libro · Biblioteca Virtual',
         loadComponent: () =>
           import('@features/books/book-detail/book-detail').then((m) => m.BookDetail),
       },
       {
         path: 'libros/:bookId/editar',
+        canActivate: [authGuard],
         title: 'Editar libro · Biblioteca Virtual',
         loadComponent: () => import('@features/books/book-form/book-form').then((m) => m.BookForm),
       },
       {
-        path: 'prestamos',
-        title: 'Mis préstamos · Biblioteca Virtual',
-        loadComponent: () =>
-          import('@features/readings/reading-list/reading-list').then((m) => m.ReadingList),
-      },
-      {
         path: 'resenas',
+        canActivate: [authGuard],
         title: 'Reseñas · Biblioteca Virtual',
         loadComponent: () =>
           import('@features/reviews/review-list/review-list').then((m) => m.ReviewList),
       },
       {
         path: 'ruleta',
+        canActivate: [authGuard],
         title: 'Ruleta · Biblioteca Virtual',
         loadComponent: () =>
           import('@features/roulette/roulette-page/roulette-page').then((m) => m.RoulettePage),

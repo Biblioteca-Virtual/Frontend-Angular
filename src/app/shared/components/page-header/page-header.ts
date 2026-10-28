@@ -33,6 +33,30 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       margin-bottom: var(--bv-space-5);
     }
 
+    h1 {
+      position: relative;
+      display: inline-block;
+      font-family: var(--vl-font-serif);
+      font-style: italic;
+      font-weight: 700;
+      font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+      line-height: 1.1;
+      color: #000;
+      margin-bottom: var(--bv-space-2);
+      z-index: 1;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        right: -6px;
+        bottom: 4px;
+        height: 48%;
+        background-color: var(--vl-highlight);
+        z-index: -1;
+      }
+    }
+
     .header__text > p {
       margin-top: var(--bv-space-1);
     }

@@ -1,73 +1,214 @@
-<bv-page-header
-  [title]="isEditing() ? 'Editar libro' : 'Añadir libro'"
-  subtitle="Los campos marcados son obligatorios."
-/>
+<div class="vl-page-layout">
+  <div class="vl-title-row">
+    <h1 class="vl-highlight-title">{{ isEditing() ? 'Editar Libro' : 'Libros' }}</h1>
+  </div>
 
-<bv-error-banner [error]="error()" />
+  <div class="vl-content-grid">
+    <!-- Left Column: Form Panel -->
+    <div class="vl-form-col">
+      <div class="vl-panel">
+        <a routerLink="/libros" class="vl-back-title">
+          <svg viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>{{ isEditing() ? 'Editar libro' : 'Agregar libro a la biblioteca' }}</span>
+        </a>
 
-@if (loading()) {
-  <bv-spinner label="Cargando libro…" />
-} @else {
-  <form class="bv-card form" (ngSubmit)="submit()" novalidate>
-    <div class="bv-field">
-      <label for="titulo">Título *</label>
-      <input id="titulo" name="titulo" type="text" [(ngModel)]="form.titulo" required />
-    </div>
+        <bv-error-banner [error]="error()" />
 
-    <div class="form__row">
-      <div class="bv-field">
-        <label for="isbn">ISBN</label>
-        <input id="isbn" name="isbn" type="text" [(ngModel)]="form.isbn" />
-        <small class="bv-muted">Único en la base de datos. Repetirlo devuelve 409.</small>
+        @if (loading()) {
+          <bv-spinner label="Cargando libro…" />
+        } @else {
+          <form (ngSubmit)="submit()" novalidate class="book-form">
+            <div class="vl-field">
+              <label for="titulo">Título de la colección o libro: *</label>
+              <div class="vl-input-wrap">
+                <input
+                  id="titulo"
+                  name="titulo"
+                  type="text"
+                  [(ngModel)]="form.titulo"
+                  placeholder="Ej: Cien años de soledad"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="vl-field">
+                <label for="isbn">ISBN:</label>
+                <div class="vl-input-wrap">
+                  <input
+                    id="isbn"
+                    name="isbn"
+                    type="text"
+                    [(ngModel)]="form.isbn"
+                    placeholder="978-..."
+                  />
+                </div>
+              </div>
+
+              <div class="vl-field">
+                <label for="anio">Año de publicación:</label>
+                <div class="vl-input-wrap">
+                  <input
+                    id="anio"
+                    name="anio"
+                    type="number"
+                    min="1"
+                    [(ngModel)]="form.anio_publicacion"
+                    placeholder="2024"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="vl-field">
+                <label for="categoria">Categoría: *</label>
+                <div class="vl-input-wrap">
+                  <select
+                    id="categoria"
+                    name="categoria"
+                    [(ngModel)]="form.categoria_id"
+                    class="vl-select"
+                    required
+                  >
+                    @for (cat of categories(); track cat.id) {
+                      <option [value]="cat.id.toString()">{{ cat.nombre }}</option>
+                    }
+                    @if (categories().length === 0) {
+                      <option value="1">General</option>
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <div class="vl-field">
+                <label for="cantidad">Copias físicas: *</label>
+                <div class="vl-input-wrap">
+                  <input
+                    id="cantidad"
+                    name="cantidad"
+                    type="number"
+                    min="0"
+                    [(ngModel)]="form.cantidad"
+                    placeholder="1"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Páginas totales y leídas -->
+            <div class="form-row-2">
+              <div class="vl-field">
+                <label for="paginas_totales">Páginas totales:</label>
+                <div class="vl-input-wrap">
+                  <input
+                    id="paginas_totales"
+                    name="paginas_totales"
+                    type="number"
+                    min="0"
+                    [(ngModel)]="form.paginas_totales"
+                    placeholder="Ej: 350"
+                  />
+                </div>
+              </div>
+
+              <div class="vl-field">
+                <label for="paginas_leidas">Páginas leídas:</label>
+                <div class="vl-input-wrap">
+                  <input
+                    id="paginas_leidas"
+                    name="paginas_leidas"
+                    type="number"
+                    min="0"
+                    [(ngModel)]="form.paginas_leidas"
+                    placeholder="Ej: 140"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Previsualización del porcentaje -->
+            <div class="reading-progress-preview">
+              <div class="reading-progress-preview__bar">
+                <div class="reading-progress-preview__fill" [style.width.%]="readingPercentage"></div>
+              </div>
+              <span class="reading-progress-preview__label">
+                Progreso calculado: <strong>% {{ readingPercentage }}</strong>
+              </span>
+            </div>
+
+            <!-- Portada del libro (Storage) -->
+            <div class="vl-field">
+              <label>Portada del libro:</label>
+              <div class="cover-upload-section">
+                @if (form.imagen_portada) {
+                  <div class="cover-thumb-preview">
+                    <img [src]="getCoverUrl(form.imagen_portada)" alt="Portada del libro" />
+                    <button type="button" class="btn-remove-thumb" (click)="removeCover()" title="Quitar portada">
+                      ✕ Quitar
+                    </button>
+                  </div>
+                }
+                <div class="cover-upload-action">
+                  <label class="btn-file-picker">
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                      (change)="onFileSelected($event)"
+                      style="display: none;"
+                    />
+                    <span>{{ uploadingCover() ? 'Subiendo imagen…' : (form.imagen_portada ? 'Cambiar imagen de portada' : 'Subir imagen de portada') }}</span>
+                  </label>
+                  @if (uploadError()) {
+                    <p class="upload-error">{{ uploadError() }}</p>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="vl-field">
+              <label for="descripcion">Notas / Descripción:</label>
+              <div class="vl-input-wrap">
+                <textarea
+                  id="descripcion"
+                  name="descripcion"
+                  [(ngModel)]="form.descripcion"
+                  placeholder="Escribe notas o descripción del libro..."
+                  rows="3"
+                  class="vl-textarea"
+                ></textarea>
+              </div>
+            </div>
+          </form>
+        }
       </div>
 
-      <div class="bv-field">
-        <label for="anio">Año de publicación</label>
-        <input id="anio" name="anio" type="number" min="1" [(ngModel)]="form.anio_publicacion" />
-      </div>
-    </div>
-
-    <div class="form__row">
-      <div class="bv-field">
-        <label for="categoria">ID de categoría *</label>
-        <input
-          id="categoria"
-          name="categoria"
-          type="number"
-          min="1"
-          [(ngModel)]="form.categoria_id"
-          required
+      <!-- Action Folder Buttons -->
+      <div class="vl-folder-actions">
+        <bv-folder-button
+          [label]="isEditing() ? 'Guardar' : 'Agregar libro'"
+          type="submit"
+          [disabled]="submitting() || loading() || uploadingCover()"
+          (clicked)="submit()"
         />
-        <small class="bv-muted">
-          El backend no expone un endpoint de categorías; consulta la tabla
-          <code>categorias</code>.
-        </small>
-      </div>
-
-      <div class="bv-field">
-        <label for="cantidad">Copias *</label>
-        <input
-          id="cantidad"
-          name="cantidad"
-          type="number"
-          min="0"
-          [(ngModel)]="form.cantidad"
-          required
+        <bv-folder-button
+          label="Cancelar"
+          routerLink="/libros"
         />
-        <small class="bv-muted">Nº de préstamos simultáneos que permite.</small>
       </div>
     </div>
 
-    <div class="bv-field">
-      <label for="descripcion">Descripción</label>
-      <textarea id="descripcion" name="descripcion" [(ngModel)]="form.descripcion"></textarea>
+    <!-- Right Column: Window Card with Biblioteca.jpg -->
+    <div class="vl-image-col">
+      <bv-window-card
+        title="biblioteca.png"
+        src="/assets/images/Biblioteca.jpg"
+        alt="Biblioteca"
+      />
     </div>
-
-    <div class="bv-row form__actions">
-      <button type="submit" class="bv-btn" [disabled]="submitting()">
-        {{ submitting() ? 'Guardando…' : 'Guardar' }}
-      </button>
-      <a class="bv-btn bv-btn--ghost" routerLink="/libros">Cancelar</a>
-    </div>
-  </form>
-}
+  </div>
+</div>

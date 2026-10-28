@@ -1,69 +1,195 @@
-<bv-page-header title="Catálogo de libros" subtitle="Explora el fondo disponible en la biblioteca.">
-  <div bvPageActions>
-    <a class="bv-btn bv-btn--sm" routerLink="/libros/nuevo">Añadir libro</a>
+<div class="vl-page-layout">
+  <div class="vl-title-row">
+    <h1 class="vl-highlight-title">Biblioteca</h1>
   </div>
-</bv-page-header>
 
-<div class="bv-field search">
-  <label for="search">Buscar por título</label>
-  <input
-    id="search"
-    type="search"
-    placeholder="El nombre de la rosa…"
-    [value]="search()"
-    (input)="onSearch(searchInput.value)"
-    #searchInput
-  />
-  <small class="bv-muted">
-    La búsqueda del backend solo mira el <strong>título</strong>, aunque la documentación OpenAPI
-    sugiera ISBN, autor y descripción.
-  </small>
-</div>
+  <div class="vl-content-grid">
+    <!-- Left Column: Search & Overview OR Complete Library Grid -->
+    <div class="vl-form-col">
+      @if (viewMode() === 'overview') {
+        <!-- Overview Mode (matches Biblioteca.svg) -->
+        <div class="vl-panel">
+          <div class="vl-panel__top-bar">
+            <span class="vl-back-title">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>Biblioteca</span>
+            </span>
+          </div>
 
-<bv-error-banner [error]="state.error()" />
+          <!-- Button: Ingresar a toda la biblioteca con icono libro-alt.svg -->
+          <button type="button" class="vl-btn-gold" (click)="setViewMode('complete')">
+            <img src="/assets/images/libro-alt.svg" alt="" aria-hidden="true" class="vl-btn-gold__icon" />
+            <span>Ingresar a toda la biblioteca</span>
+          </button>
 
-@if (state.isInitialLoading()) {
-  <bv-spinner label="Cargando catálogo…" />
-} @else {
-  @if (state.data(); as books) {
-    @if (books.length === 0) {
-      <bv-empty-state
-        title="No hay libros que coincidan"
-        [description]="
-          search().trim()
-            ? 'Prueba con otro título o limpia el buscador.'
-            : 'El catálogo está vacío. Añade el primer libro para empezar.'
-        "
-      />
-    } @else {
-      <p class="bv-muted count">{{ books.length }} {{ books.length === 1 ? 'libro' : 'libros' }}</p>
-
-      <ul class="grid">
-        @for (book of books; track trackBook($index, book)) {
-          <li class="bv-card card">
-            <a class="card__link" [routerLink]="['/libros', book.id]">
-              <h3 class="card__title">{{ book.titulo }}</h3>
-            </a>
-
-            <p class="card__authors">
-              @if (book.autores.length > 0) {
-                {{ book.autores | autorNombre }}
-              } @else {
-                <span class="bv-muted">Autor desconocido</span>
-              }
-            </p>
-
-            <div class="bv-row card__meta">
-              @if (book.categoria.nombre; as category) {
-                <span class="bv-badge bv-badge--neutral">{{ category }}</span>
-              }
-              <span class="bv-badge" [class.bv-badge--success]="book.cantidad > 0">
-                {{ book.cantidad > 0 ? book.cantidad + ' copias' : 'Sin copias' }}
-              </span>
+          <div class="vl-search-group">
+            <!-- Search by Title con icono busqueda.svg -->
+            <div class="vl-field">
+              <label for="bookTitle">Búsqueda por título:</label>
+              <div class="vl-input-wrap">
+                <img src="/assets/images/busqueda.svg" class="vl-input-icon" alt="" aria-hidden="true" />
+                <input
+                  id="bookTitle"
+                  type="text"
+                  [ngModel]="titleSearch()"
+                  (ngModelChange)="titleSearch.set($event)"
+                  placeholder="Ingrese el título"
+                />
+              </div>
             </div>
-          </li>
-        }
-      </ul>
-    }
-  }
-}
+
+            <!-- Search by Author con icono usuario.svg -->
+            <div class="vl-field">
+              <label for="bookAuthor">Búsqueda por autor:</label>
+              <div class="vl-input-wrap">
+                <img src="/assets/images/usuario.svg" class="vl-input-icon" alt="" aria-hidden="true" />
+                <input
+                  id="bookAuthor"
+                  type="text"
+                  [ngModel]="authorSearch()"
+                  (ngModelChange)="authorSearch.set($event)"
+                  placeholder="Ingrese autor"
+                />
+              </div>
+            </div>
+
+            <!-- Search / Filter by Category (matches Categorias.svg) -->
+            <div class="vl-field">
+              <label>Búsqueda por categoría:</label>
+              <div class="vl-category-dropdown">
+                <button
+                  type="button"
+                  class="vl-category-trigger"
+                  (click)="toggleCategoryDropdown()"
+                  [attr.aria-expanded]="isCategoryOpen()"
+                >
+                  <svg class="vl-chevron-icon" [class.vl-chevron-icon--open]="isCategoryOpen()" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2.5" fill="none" />
+                  </svg>
+                  <span>{{ selectedCategory() || 'Categorías' }}</span>
+                </button>
+
+                @if (isCategoryOpen()) {
+                  <div class="vl-category-menu">
+                    @for (cat of categories(); track cat) {
+                      <button
+                        type="button"
+                        class="vl-category-item"
+                        [class.vl-category-item--active]="selectedCategory() === cat"
+                        (click)="selectCategory(cat)"
+                      >
+                        {{ cat }}
+                      </button>
+                    }
+                    @if (categories().length === 0) {
+                      <div class="vl-category-item vl-category-item--empty">Sin categorías disponibles</div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collections Section with Blue Folder Buttons -->
+        <div class="collections-section">
+          <h2 class="collections-title">Colecciones</h2>
+          <div class="vl-folder-actions">
+            <bv-folder-button
+              label="Coleccion1"
+              (clicked)="selectCollection('Coleccion1')"
+            />
+            <bv-folder-button
+              label="Coleccion 2"
+              (clicked)="selectCollection('Coleccion 2')"
+            />
+            <bv-folder-button
+              label="Agregar libro"
+              routerLink="/libros/nuevo"
+            />
+          </div>
+        </div>
+      } @else {
+        <!-- Complete Library View (matches Toda biblioteca.svg) -->
+        <div class="vl-panel vl-panel--full-catalog">
+          <div class="vl-panel__top-bar">
+            <button type="button" class="vl-back-title vl-back-title--btn" (click)="setViewMode('overview')">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>Biblioteca completa</span>
+            </button>
+
+            @if (selectedCollection()) {
+              <span class="active-collection-badge">
+                Filtro: {{ selectedCollection() }}
+                <button type="button" (click)="selectedCollection.set(null)" class="badge-close">×</button>
+              </span>
+            }
+          </div>
+
+          <bv-error-banner [error]="state.error()" />
+
+          @if (state.isInitialLoading()) {
+            <bv-spinner label="Cargando libros…" />
+          } @else {
+            @if (filteredBooks().length === 0) {
+              <bv-empty-state
+                title="No se encontraron libros"
+                description="Intenta buscar con otros términos o agrega un nuevo libro."
+              />
+            } @else {
+              <div class="books-grid">
+                @for (book of filteredBooks(); track trackBook($index, book)) {
+                  <a [routerLink]="['/libros', book.id]" class="book-grid-card">
+                    <div class="book-cover-frame">
+                      @if (getCoverUrl(book.imagen_portada); as coverUrl) {
+                        <img [src]="coverUrl" [alt]="book.titulo" class="book-cover-thumbnail" />
+                      } @else {
+                        <div class="book-cover-graphic">
+                          <svg viewBox="0 0 90 115" class="book-svg" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                              <linearGradient id="bookSky" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#b8e3fa" />
+                                <stop offset="60%" stop-color="#d4effc" />
+                                <stop offset="100%" stop-color="#a8dc6e" />
+                              </linearGradient>
+                            </defs>
+                            <rect width="90" height="115" rx="3" fill="url(#bookSky)" />
+                            <circle cx="45" cy="40" r="14" fill="#ffffff" fill-opacity="0.9" />
+                            <circle cx="34" cy="42" r="10" fill="#ffffff" fill-opacity="0.9" />
+                            <circle cx="56" cy="42" r="10" fill="#ffffff" fill-opacity="0.9" />
+                            <path d="M 0 92 Q 45 75 90 92 L 90 115 L 0 115 Z" fill="#7fa615" />
+                          </svg>
+                        </div>
+                      }
+                    </div>
+                    <span class="book-grid-title" [title]="book.titulo">{{ book.titulo }}</span>
+                  </a>
+                }
+              </div>
+            }
+
+            <div class="add-book-row">
+              <a routerLink="/libros/nuevo" class="add-book-btn">
+                <span class="add-plus" aria-hidden="true">+</span>
+                <span>Agregar libro</span>
+              </a>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Right Column: Window Card with Biblioteca.jpg -->
+    <div class="vl-image-col">
+      <bv-window-card
+        title="biblioteca.png"
+        src="/assets/images/Biblioteca.jpg"
+        alt="Interior Biblioteca"
+      />
+    </div>
+  </div>
+</div>

@@ -17,7 +17,12 @@ body {
   font-size: var(--bv-text-base);
   line-height: 1.55;
   color: var(--bv-text);
-  background-color: var(--bv-bg);
+  background-color: #b7d5eb;
+  background-image: url('/assets/images/sky-bg.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -250,3 +255,149 @@ a {
 .bv-muted {
   color: var(--bv-text-muted);
 }
+
+// --- Virtual Library Figma System Classes --------------------------------
+.vl-highlight-title {
+  position: relative;
+  display: inline-block;
+  font-family: var(--vl-font-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 1.1;
+  color: #000;
+  margin-bottom: var(--bv-space-4);
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    right: -6px;
+    bottom: 6px;
+    height: 48%;
+    background-color: var(--vl-highlight);
+    z-index: -1;
+  }
+}
+
+.vl-panel {
+  background-color: var(--vl-panel-bg);
+  border-radius: 20px;
+  padding: 1.75rem 2.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.vl-back-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--vl-header-gold);
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+
+  svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  &:hover {
+    text-decoration: none;
+    filter: brightness(0.9);
+  }
+}
+
+.vl-field {
+  margin-bottom: 1.1rem;
+
+  label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 0.35rem;
+  }
+
+  .vl-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    img.vl-input-icon {
+      position: absolute;
+      left: 0.85rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      pointer-events: none;
+      object-fit: contain;
+    }
+
+    svg.vl-input-icon {
+      position: absolute;
+      left: 0.85rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      pointer-events: none;
+      color: #b88628;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 0.7rem 1rem 0.7rem 2.5rem;
+      background-color: var(--vl-input-gold);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--vl-input-text);
+      outline: none;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+
+      &::placeholder {
+        color: #7b653e;
+        opacity: 0.9;
+      }
+
+      &:focus {
+        background-color: var(--vl-input-gold-hover);
+        box-shadow: 0 0 0 2px rgba(229, 172, 49, 0.4);
+      }
+    }
+  }
+}
+
+.vl-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--vl-input-gold);
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #2b220d;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+
+  img {
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+  }
+
+  &:hover {
+    background-color: var(--vl-input-gold-hover);
+    transform: translateY(-1px);
+  }
+}
+

@@ -1,0 +1,155 @@
+:host {
+  display: block;
+}
+
+.home-container {
+  display: grid;
+  grid-template-columns: minmax(240px, 290px) 1fr minmax(260px, 320px);
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  min-height: calc(82vh - 70px);
+  padding: 1rem 0 2rem;
+  position: relative;
+}
+
+// Center Hero
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+}
+
+.hero-brand {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  user-select: none;
+
+  &__virtual {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(3.5rem, 6.5vw, 6.8rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: #000000;
+  }
+
+  &__library-box {
+    position: relative;
+    display: inline-block;
+    background-color: #ffe847;
+    padding: 0 1rem;
+    margin-top: 0.25rem;
+  }
+
+  &__library {
+    font-family: Georgia, 'Playfair Display', 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(3.8rem, 7vw, 7.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #000000;
+    display: block;
+  }
+}
+
+.hero-slogan {
+  margin-top: 2.5rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+  font-weight: 500;
+  color: #111111;
+  line-height: 1.45;
+  text-align: center;
+
+  &__highlight {
+    background-color: #55a8f5;
+    color: #000;
+    padding: 0 4px;
+    border-radius: 2px;
+  }
+}
+
+// Left Card
+.home-card-col--left {
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+
+  bv-window-card {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 12px;
+  }
+}
+
+// Right Stacked Cards
+.home-card-col--right {
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+
+.home-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.home-card-item {
+  width: 100%;
+
+  bv-window-card {
+    width: 100%;
+  }
+
+  &--login {
+    transform: translateX(10px);
+  }
+
+  &--register {
+    transform: translateX(-10px);
+  }
+}
+
+// Responsive Layout
+@media (max-width: 1024px) {
+  .home-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .home-hero {
+    grid-column: 1 / -1;
+    margin-bottom: 1rem;
+  }
+
+  .home-card-item--login,
+  .home-card-item--register {
+    transform: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .home-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .home-card-col {
+    justify-content: center;
+  }
+
+  .home-card-stack {
+    max-width: 320px;
+    margin-inline: auto;
+  }
+}

@@ -12,6 +12,8 @@ import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '@core/api/api-error';
 import { AuthService } from '@core/services/auth.service';
 import { ErrorBanner } from '@shared/components/error-banner/error-banner';
+import { FolderButton } from '@shared/components/folder-button/folder-button';
+import { WindowCard } from '@shared/components/window-card/window-card';
 
 /** Longitud minima de contraseña impuesta por `app/schemas/user_schema.py`. */
 const MIN_PASSWORD_LENGTH = 6;
@@ -19,7 +21,7 @@ const MIN_PASSWORD_LENGTH = 6;
 @Component({
   selector: 'bv-register',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, ErrorBanner],
+  imports: [ReactiveFormsModule, RouterLink, ErrorBanner, FolderButton, WindowCard],
   templateUrl: './register.html',
   styleUrl: '../auth-form.scss',
 })
