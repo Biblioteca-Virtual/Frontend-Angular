@@ -3,20 +3,20 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-10-28.
+> Generado: 2026-10-29.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | frontend |
-| Índice de calidad de servicios | **20/100** (mínimo 60) |
-| Criterios cumplidos | **10/15** |
+| Índice de calidad de servicios | **21/100** (mínimo 60) |
+| Criterios cumplidos | **10/14** |
 | Aprobado (semáforo) | **NO** |
-| Código (LOC) | 2,264 |
+| Código (LOC) | 2,490 |
 | Archivos de código | 46 |
 | Tests (archivos) | 3 |
-| Cobertura de líneas | no medible (mínimo 80%) |
+| Cobertura de líneas | no aplica (frontend sin herramienta de cobertura E2E) (mínimo 80%) |
 | Capas detectadas | vistas, servicios |
 
 > **Aprobado** exige cumplir **todos** los criterios del semáforo. No es una nota: sirve para ordenar y priorizar la revisión.
@@ -25,7 +25,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Máximo Aznar Massut | 3 | 3,908 | 182 | 457 | 4 | 100% |
+| Máximo Aznar Massut | 4 | 5,663 | 182 | 457 | 5 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -35,7 +35,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| Máximo Aznar Massut | 9 | 41% | 14 d | 14% | **29** | No aprueba | Cumplimiento 41% (mín. 50%); Pausa 14 d (máx. 10 d); Recencia 14% (mín. 50%) |
+| Máximo Aznar Massut | 9 | 41% | 14 d | 93% | **40** | No aprueba | Cumplimiento 41% (mín. 50%); Pausa 14 d (máx. 10 d) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -47,7 +47,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **20/100** _(mínimo 60)_
+- **Tu resultado:** índice **21/100** _(mínimo 60)_
 - **Para investigar la causa:**
     - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
     - ¿El índice bajó por muchas señales chicas o por una o dos graves?
@@ -57,7 +57,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **4.2%** de duplicación _(máximo 15%)_
+- **Tu resultado:** **2.5%** de duplicación _(máximo 15%)_
 
 ### 3. Secretos hardcodeados (SEC) — OK
 
@@ -105,7 +105,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Una clase o unidad cuyos métodos y campos no están relacionados entre sí.
 - **Por qué importa:** Una unidad que cambia por motivos distintos es frágil y cuesta entenderla.
-- **Tu resultado:** **2** unidad(es) con baja cohesión _(máximo 0)_
+- **Tu resultado:** **3** unidad(es) con baja cohesión _(máximo 0)_
 - **Para investigar la causa:**
     - ¿La unidad agrupa cosas que en realidad pertenecen a lugares distintos?
     - ¿Cambia por motivos diferentes según la tarea?
@@ -115,7 +115,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **0** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 2264 LOC))_
+- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 2490 LOC))_
 
 ### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
@@ -127,27 +127,17 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Cuánto depende una unidad de las partes internas de otra.
 - **Por qué importa:** Piezas muy enlazadas hacen que un cambio se propague y que sea difícil reemplazar partes.
-- **Tu resultado:** **15** unidad(es) con acoplamiento alto _(máximo 2 por 1000 LOC)_
+- **Tu resultado:** **13** unidad(es) con acoplamiento alto _(máximo 2 por 1000 LOC)_
 - **Para investigar la causa:**
     - ¿Las piezas se conocen en detalle entre sí (acceden a campos o estructuras internas)?
     - ¿El acceso a datos ocurre desde lugares que no son los responsables?
     - ¿Se puede cambiar una parte sin tocar las demás?
 
-### 14. Cobertura de tests (Cob) — A REVISAR
-
-- **Qué mide:** Porcentaje de líneas de código ejecutadas por la suite de tests (cobertura real, no cantidad de archivos de test).
-- **Por qué importa:** Un test que existe pero no ejecuta el código no protege de nada: la cobertura muestra qué partes quedan sin verificar.
-- **Tu resultado:** **no medible** (sin tests, sin runner o sin artefacto de cobertura) _(mínimo 80% de líneas)_
-- **Para investigar la causa:**
-    - ¿Qué módulos o ramas del sistema nunca se ejecutan en los tests?
-    - ¿Los tests prueban el camino principal y los errores, o solo el caso feliz?
-    - ¿La suite se puede correr en CI sin base de datos ni servicios externos?
-
-### 15. Vistas del frontend (Vistas) — A REVISAR
+### 14. Vistas del frontend (Vistas) — A REVISAR
 
 - **Qué mide:** Cantidad de vistas/componentes de pantalla del frontend.
 - **Por qué importa:** El frontend se mide por pantallas: pocas vistas sugiere poca cobertura de la interfaz pedida.
-- **Tu resultado:** **5** vista(s)/componente(s) _(mínimo 8)_
+- **Tu resultado:** **7** vista(s)/componente(s) _(mínimo 8)_
 - **Para investigar la causa:**
     - ¿La app cubre todas las pantallas del enunciado?
     - ¿Hay pantallas que resuelven todo con una única vista?
@@ -159,11 +149,10 @@ Criterios que hoy están en rojo y qué habría que cambiar para alcanzar el niv
 
 | Criterio | Resultado actual | Meta | Qué arreglar |
 |---|---|---|---|
-| Índice de calidad de servicios (indice) | índice **20/100** | mínimo 60 | Subir el índice a ≥60 corrigiendo primero las señales de más peso: duplicación, secretos, SQL y capas. |
-| Baja cohesión (Coh) | **2** unidad(es) con baja cohesión | máximo 0 | Separar en unidades con una sola responsabilidad; 0 clases con baja cohesión. |
-| Acoplamiento alto (Acop) | **15** unidad(es) con acoplamiento alto | máximo 2 por 1000 LOC | Reducir dependencias directas entre unidades; ≤2 por 1000 LOC. |
-| Cobertura de tests (Cob) | **no medible** (sin tests, sin runner o sin artefacto de cobertura) | mínimo 80% de líneas | Publicar cobertura (o correr la suite con coverage) y cubrir ≥80% de líneas. |
-| Vistas del frontend (Vistas) | **5** vista(s)/componente(s) | mínimo 8 | Cubrir las pantallas del enunciado hasta llegar a 8 vistas/componentes. |
+| Índice de calidad de servicios (indice) | índice **21/100** | mínimo 60 | Subir el índice a ≥60 corrigiendo primero las señales de más peso: duplicación, secretos, SQL y capas. |
+| Baja cohesión (Coh) | **3** unidad(es) con baja cohesión | máximo 0 | Separar en unidades con una sola responsabilidad; 0 clases con baja cohesión. |
+| Acoplamiento alto (Acop) | **13** unidad(es) con acoplamiento alto | máximo 2 por 1000 LOC | Reducir dependencias directas entre unidades; ≤2 por 1000 LOC. |
+| Vistas del frontend (Vistas) | **7** vista(s)/componente(s) | mínimo 8 | Cubrir las pantallas del enunciado hasta llegar a 8 vistas/componentes. |
 
 > Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo.
 
@@ -171,25 +160,24 @@ Criterios que hoy están en rojo y qué habría que cambiar para alcanzar el niv
 
 Archivos donde el análisis encontró cada señal en rojo (sin número de línea, a propósito):
 
-**Baja cohesión (Coh)** — 2 archivo(s):
+**Baja cohesión (Coh)** — 3 archivo(s):
 - `src/app/features/books/book-detail/book-detail.ts`
+- `src/app/features/books/book-list/book-list.ts`
 - `src/app/features/reviews/review-list/review-list.ts`
 
-**Acoplamiento alto (Acop)** — 15 archivo(s):
+**Acoplamiento alto (Acop)** — 13 archivo(s):
 - `src/app/core/api/api-error.ts`
 - `src/app/core/services/auth.service.ts`
 - `src/app/core/services/book.service.ts`
 - `src/app/core/services/health.service.ts`
-- `src/app/core/services/reading.service.ts`
 - `src/app/core/services/review.service.ts`
-- `src/app/core/services/roulette.service.ts`
 - `src/app/core/services/token-storage.service.ts`
 - `src/app/features/auth/login/login.ts`
 - `src/app/features/auth/register/register.ts`
 - `src/app/features/books/book-detail/book-detail.ts`
-- `src/app/features/readings/reading-list/reading-list.ts`
+- `src/app/features/books/book-form/book-form.ts`
+- `src/app/features/books/book-list/book-list.ts`
 - `src/app/features/reviews/review-list/review-list.ts`
-- `src/app/features/roulette/roulette-page/roulette-page.ts`
 - `src/app/shared/pipes/bv-date.pipe.ts`
 
 ---
