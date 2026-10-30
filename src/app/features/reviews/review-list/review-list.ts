@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -23,6 +23,7 @@ import { BvDatePipe } from '@shared/pipes/bv-date.pipe';
 export class ReviewList {
   private readonly reviews = inject(ReviewService);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly state = new AsyncState<ApiReview[]>();
   protected readonly actionError = signal<ApiError | null>(null);
@@ -84,7 +85,7 @@ export class ReviewList {
 
     this.reviews
       .create(payload)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
           this.state.setData([...(this.state.data() ?? []), created]);
@@ -105,7 +106,7 @@ export class ReviewList {
 
     this.reviews
       .delete(review.id)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () =>
           this.state.setData((this.state.data() ?? []).filter((item) => item.id !== review.id)),

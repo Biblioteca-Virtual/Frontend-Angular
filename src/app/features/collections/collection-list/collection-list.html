@@ -1,0 +1,106 @@
+<div class="vl-page-layout">
+  <h1 class="vl-highlight-title">Colecciones</h1>
+
+  <div class="vl-content-grid">
+    <div class="vl-panel">
+      <a routerLink="/libros" class="vl-back-title">
+        <svg viewBox="0 0 24 24">
+          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>Colecciones</span>
+      </a>
+
+      <bv-error-banner [error]="state.error()" />
+
+      @if (state.isInitialLoading()) {
+        <bv-spinner label="Cargando colecciones…" />
+      } @else if (creating()) {
+        <div class="create-layout">
+          <bv-folder-button label="Agregar colección" [disabled]="true" />
+
+          <form class="inline-form" (ngSubmit)="create()" novalidate>
+            <div class="vl-field">
+              <label for="nombre">Título de la colección:</label>
+              <div class="vl-input-wrap">
+                <input
+                  id="nombre"
+                  name="nombre"
+                  type="text"
+                  maxlength="100"
+                  placeholder="Ej.: Para releer"
+                  [ngModel]="nombre()"
+                  (ngModelChange)="nombre.set($event)"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="vl-field">
+              <label for="libro">Agregar libro a colección:</label>
+              <div class="vl-input-wrap">
+                <select
+                  id="libro"
+                  name="libro"
+                  [ngModel]="libroId()"
+                  (ngModelChange)="libroId.set($event)"
+                  [disabled]="catalog.loading()"
+                >
+                  <option [ngValue]="''">
+                    {{ catalog.loading() ? 'Cargando biblioteca…' : 'Ninguno por ahora' }}
+                  </option>
+                  @for (book of catalog.data() ?? []; track book.id) {
+                    <option [ngValue]="book.id">{{ book.titulo }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <bv-error-banner [error]="actionError()" />
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="vl-btn vl-btn--primary"
+                [disabled]="saving() || !nombre().trim()"
+              >
+                {{ saving() ? 'Guardando…' : 'Crear colección' }}
+              </button>
+              <button
+                type="button"
+                class="vl-btn vl-btn--ghost"
+                [disabled]="saving()"
+                (click)="cancelCreating()"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      } @else {
+        <div class="folders">
+          @for (collection of state.data() ?? []; track collection.id) {
+            <bv-folder-button
+              [label]="collection.nombre"
+              [routerLink]="['/colecciones', collection.id]"
+            />
+          }
+          <bv-folder-button label="Agregar colección" (clicked)="startCreating()" />
+        </div>
+
+        @if ((state.data() ?? []).length === 0) {
+          <p class="hint">
+            Todavía no tenés colecciones. Creá una para agrupar tus libros.
+          </p>
+        }
+      }
+    </div>
+
+    <div class="vl-image-col">
+      <bv-window-card
+        title="biblioteca.png"
+        src="/assets/images/Biblioteca.jpg"
+        alt="Interior de una biblioteca"
+      />
+    </div>
+  </div>
+</div>

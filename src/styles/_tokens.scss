@@ -11,18 +11,31 @@
   // --- Virtual Library Figma Tokens ---------------------------------------
   --vl-highlight: #ffe847;
   --vl-panel-bg: #f8f5f0;
-  --vl-header-gold: #e5ac31;
+  // Dorado de subtítulos sobre crema. Más oscuro que el #e5ac31 de Canva para
+  // llegar al contraste mínimo de texto grande (3:1).
+  --vl-header-gold: #b07812;
   --vl-input-gold: #f3d99d;
   --vl-input-gold-hover: #ebd190;
   --vl-input-text: #2f2512;
   --vl-window-header: #dad8db;
   --vl-font-serif: Georgia, 'Playfair Display', 'Times New Roman', serif;
+  // Acción principal (guardar, confirmar): el azul del porcentaje de lectura.
+  --vl-primary: #0b4f9c;
+  --vl-primary-hover: #083d7a;
+  --vl-danger: #b42318;
+  --vl-danger-hover: #8f1c13;
+  // Dorado oscuro para texto sobre crema (el dorado claro no llega a 4.5:1).
+  --vl-gold-text: #8c6019;
+  // Velo sobre la foto de fondo: la apaga un poco para que los paneles resalten.
+  --vl-bg-dim: rgb(18 28 42 / 24%);
 
   // --- Marca --------------------------------------------------------------
-  --bv-primary: #4f46e5;
-  --bv-primary-hover: #4338ca;
-  --bv-primary-active: #3730a3;
-  --bv-primary-soft: #eef2ff;
+  // Alineado con --vl-primary para que los botones `bv-btn` (reseñas, ruleta,
+  // 404) usen el mismo azul que el resto de la interfaz.
+  --bv-primary: #0b4f9c;
+  --bv-primary-hover: #083d7a;
+  --bv-primary-active: #062e5c;
+  --bv-primary-soft: #e6eef8;
   --bv-primary-contrast: #ffffff;
 
   // --- Semánticos ---------------------------------------------------------

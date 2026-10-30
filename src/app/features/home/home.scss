@@ -4,10 +4,10 @@
 
 .home-container {
   display: grid;
-  grid-template-columns: minmax(240px, 290px) 1fr minmax(260px, 320px);
+  grid-template-columns: minmax(300px, 390px) 1fr minmax(260px, 310px);
   align-items: center;
   justify-content: center;
-  gap: 2.5rem;
+  gap: 2rem;
   min-height: calc(82vh - 70px);
   padding: 1rem 0 2rem;
   position: relative;
@@ -84,7 +84,7 @@
 
   bv-window-card {
     width: 100%;
-    max-width: 280px;
+    max-width: 390px;
     border-radius: 12px;
   }
 }

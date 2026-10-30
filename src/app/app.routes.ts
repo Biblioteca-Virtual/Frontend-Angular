@@ -64,6 +64,24 @@ export const routes: Routes = [
         loadComponent: () => import('@features/books/book-form/book-form').then((m) => m.BookForm),
       },
       {
+        path: 'colecciones',
+        canActivate: [authGuard],
+        title: 'Colecciones · Biblioteca Virtual',
+        loadComponent: () =>
+          import('@features/collections/collection-list/collection-list').then(
+            (m) => m.CollectionList,
+          ),
+      },
+      {
+        path: 'colecciones/:collectionId',
+        canActivate: [authGuard],
+        title: 'Colección · Biblioteca Virtual',
+        loadComponent: () =>
+          import('@features/collections/collection-detail/collection-detail').then(
+            (m) => m.CollectionDetail,
+          ),
+      },
+      {
         path: 'resenas',
         canActivate: [authGuard],
         title: 'Reseñas · Biblioteca Virtual',
@@ -71,12 +89,14 @@ export const routes: Routes = [
           import('@features/reviews/review-list/review-list').then((m) => m.ReviewList),
       },
       {
-        path: 'ruleta',
+        path: 'arbol',
         canActivate: [authGuard],
-        title: 'Ruleta · Biblioteca Virtual',
+        title: 'Árbol de lectura · Biblioteca Virtual',
         loadComponent: () =>
-          import('@features/roulette/roulette-page/roulette-page').then((m) => m.RoulettePage),
+          import('@features/reading-tree/reading-tree-page').then((m) => m.ReadingTreePage),
       },
+      // La ruleta se reemplazó por el árbol de lectura.
+      { path: 'ruleta', redirectTo: 'arbol' },
     ],
   },
   {

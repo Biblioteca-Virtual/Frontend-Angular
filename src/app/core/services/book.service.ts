@@ -4,10 +4,12 @@ import { Observable } from 'rxjs';
 import { API_ENDPOINTS, API_URL } from '@core/api/api.config';
 import { dataRequest, messageRequest } from '@core/api/api-operators';
 import {
+  ApiAuthor,
   ApiBook,
   ApiCategory,
   ApiEnvelope,
   ApiMessage,
+  ApiReview,
   CreateBookRequest,
   UpdateBookProgressRequest,
   UpdateBookRequest,
@@ -18,7 +20,7 @@ export class BookService {
   private readonly http = inject(HttpClient);
 
   /**
-   * Lista el catálogo completo.
+   * Lista la biblioteca del usuario actual.
    */
   list(q?: string): Observable<ApiBook[]> {
     let params = new HttpParams();
@@ -40,6 +42,41 @@ export class BookService {
    */
   getCategories(): Observable<ApiCategory[]> {
     return dataRequest(this.http.get<ApiEnvelope<ApiCategory[]>>(API_ENDPOINTS.categories));
+  }
+
+  /**
+   * Agrega una categoría compartida. Si ya existe (sin importar mayúsculas),
+   * el backend devuelve la existente.
+   */
+  createCategory(nombre: string): Observable<ApiCategory> {
+    return dataRequest(
+      this.http.post<ApiEnvelope<ApiCategory>>(API_ENDPOINTS.categories, { nombre }),
+    );
+  }
+
+  /** Autores compartidos, para sugerirlos al cargar un libro. */
+  getAuthors(): Observable<ApiAuthor[]> {
+    return dataRequest(this.http.get<ApiEnvelope<ApiAuthor[]>>(API_ENDPOINTS.authors));
+  }
+
+  /**
+   * Agrega un autor por su nombre completo. Si ya existe (sin importar
+   * mayúsculas), el backend devuelve el existente.
+   */
+  createAuthor(nombreCompleto: string): Observable<ApiAuthor> {
+    return dataRequest(
+      this.http.post<ApiEnvelope<ApiAuthor>>(API_ENDPOINTS.authors, {
+        nombre_completo: nombreCompleto,
+      }),
+    );
+  }
+
+  /**
+   * Reseñas del libro y de los libros de otros usuarios con un título
+   * equivalente (sin importar tildes, mayúsculas ni pequeños errores).
+   */
+  reviews(id: number): Observable<ApiReview[]> {
+    return dataRequest(this.http.get<ApiEnvelope<ApiReview[]>>(API_ENDPOINTS.bookReviews(id)));
   }
 
   /** Crea un libro. El backend responde 201 con el libro ya guardado. */

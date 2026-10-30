@@ -12,9 +12,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   template: `
     <header class="header">
       <div class="header__text">
-        <h1>{{ title() }}</h1>
+        <h1 class="vl-highlight-title">{{ title() }}</h1>
         @if (subtitle()) {
-          <p class="bv-muted">{{ subtitle() }}</p>
+          <p class="header__subtitle vl-glass">{{ subtitle() }}</p>
         }
       </div>
 
@@ -33,32 +33,17 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       margin-bottom: var(--bv-space-5);
     }
 
-    h1 {
-      position: relative;
-      display: inline-block;
-      font-family: var(--vl-font-serif);
-      font-style: italic;
-      font-weight: 700;
-      font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-      line-height: 1.1;
-      color: #000;
-      margin-bottom: var(--bv-space-2);
-      z-index: 1;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: -6px;
-        right: -6px;
-        bottom: 4px;
-        height: 48%;
-        background-color: var(--vl-highlight);
-        z-index: -1;
-      }
+    // El título usa la clase global .vl-highlight-title, igual que el resto
+    // de pantallas.
+    .header__text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    .header__text > p {
-      margin-top: var(--bv-space-1);
+    .header__subtitle {
+      font-size: var(--bv-text-sm);
+      color: #2b2b2b;
     }
 
     .header__actions:empty {

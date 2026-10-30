@@ -68,7 +68,7 @@ import { RouterLink } from '@angular/router';
           />
         </svg>
       </div>
-      <span class="folder-label">{{ label() }}</span>
+      <span class="folder-label vl-glass">{{ label() }}</span>
     </ng-template>
   `,
   styles: `
@@ -127,10 +127,14 @@ import { RouterLink } from '@angular/router';
       font-weight: 600;
       color: #1a1a1a;
       text-align: center;
-      max-width: 90px;
+      max-width: 110px;
       line-height: 1.2;
       transition: color 0.15s ease;
       word-break: break-word;
+      // La píldora de vidrio (.vl-glass) mantiene el nombre legible sobre la foto.
+      padding: 0.2rem 0.55rem;
+      border-radius: 8px;
+      box-shadow: none;
     }
   `,
 })

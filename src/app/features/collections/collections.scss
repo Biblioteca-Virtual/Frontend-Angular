@@ -1,0 +1,90 @@
+// Estilos compartidos por las pantallas de colecciones (Colecciones.svg,
+// Agregar colección.svg y Adentro de colecciones.svg).
+
+.vl-page-layout {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 0.5rem 0 3rem;
+}
+
+.vl-content-grid {
+  display: grid;
+  grid-template-columns: minmax(420px, 640px) minmax(320px, 520px);
+  gap: 3.5rem;
+  align-items: flex-start;
+}
+
+.vl-image-col {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  bv-window-card {
+    width: 100%;
+    max-width: 520px;
+  }
+}
+
+.vl-panel {
+  min-height: 320px;
+}
+
+.vl-back-title--btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.folders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+
+.create-layout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+// Formularios de nombre y de agregar libro
+.inline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .vl-field input,
+  .vl-field select {
+    padding-left: 1rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: #6b5b3a;
+}
+
+@media (max-width: 960px) {
+  .vl-content-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .vl-image-col {
+    order: -1;
+
+    bv-window-card {
+      max-width: 440px;
+    }
+  }
+}
