@@ -23,8 +23,8 @@
     </a>
 
     @if (auth.isLoggedIn()) {
-      <a class="vl-pill" routerLink="/ruleta" routerLinkActive="vl-pill--active">
-        Ruleta
+      <a class="vl-pill" routerLink="/arbol" routerLinkActive="vl-pill--active">
+        Árbol
       </a>
       <button type="button" class="vl-pill vl-pill--btn" (click)="logout()" title="Cerrar sesión">
         Salir ({{ auth.displayName() || 'Usuario' }})

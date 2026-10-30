@@ -21,7 +21,7 @@
         } @else {
           <form (ngSubmit)="submit()" novalidate class="book-form">
             <div class="vl-field">
-              <label for="titulo">Título de la colección o libro: *</label>
+              <label for="titulo">Título del libro: *</label>
               <div class="vl-input-wrap">
                 <input
                   id="titulo"
@@ -34,35 +34,58 @@
               </div>
             </div>
 
-            <div class="form-row-2">
-              <div class="vl-field">
-                <label for="isbn">ISBN:</label>
-                <div class="vl-input-wrap">
-                  <input
-                    id="isbn"
-                    name="isbn"
-                    type="text"
-                    [(ngModel)]="form.isbn"
-                    placeholder="978-..."
-                  />
+            <!-- Autores: se eligen de la lista o se agregan nuevos -->
+            <div class="vl-field">
+              <label for="autor">Autor/es:</label>
+              @if (selectedAuthors().length > 0) {
+                <ul class="author-chips">
+                  @for (author of selectedAuthors(); track author.id) {
+                    <li>
+                      <span>{{ author | autorNombre }}</span>
+                      <button
+                        type="button"
+                        [attr.aria-label]="'Quitar a ' + (author | autorNombre)"
+                        (click)="removeAuthor(author.id)"
+                      >
+                        ×
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+              <div class="inline-add inline-add--tight">
+                <div class="vl-field">
+                  <div class="vl-input-wrap">
+                    <input
+                      id="autor"
+                      name="autor"
+                      type="text"
+                      list="bv-authors"
+                      maxlength="200"
+                      autocomplete="off"
+                      [(ngModel)]="authorInput"
+                      placeholder="Ej: Gabriel García Márquez"
+                      (keydown.enter)="$event.preventDefault(); addAuthor()"
+                    />
+                    <datalist id="bv-authors">
+                      @for (author of authors(); track author.id) {
+                        <option [value]="author | autorNombre"></option>
+                      }
+                    </datalist>
+                  </div>
                 </div>
-              </div>
-
-              <div class="vl-field">
-                <label for="anio">Año de publicación:</label>
-                <div class="vl-input-wrap">
-                  <input
-                    id="anio"
-                    name="anio"
-                    type="number"
-                    min="1"
-                    [(ngModel)]="form.anio_publicacion"
-                    placeholder="2024"
-                  />
-                </div>
+                <button
+                  type="button"
+                  class="vl-btn"
+                  [disabled]="savingAuthor() || !authorInput.trim()"
+                  (click)="addAuthor()"
+                >
+                  {{ savingAuthor() ? 'Agregando…' : '+ Agregar autor' }}
+                </button>
               </div>
             </div>
 
+            <!-- Categoría (con alta de categorías nuevas) y ubicación -->
             <div class="form-row-2">
               <div class="vl-field">
                 <label for="categoria">Categoría: *</label>
@@ -70,7 +93,8 @@
                   <select
                     id="categoria"
                     name="categoria"
-                    [(ngModel)]="form.categoria_id"
+                    [ngModel]="form.categoria_id"
+                    (ngModelChange)="onCategoryChange($event)"
                     class="vl-select"
                     required
                   >
@@ -80,25 +104,75 @@
                     @if (categories().length === 0) {
                       <option value="1">General</option>
                     }
+                    <option [value]="NEW_CATEGORY">+ Agregar categoría…</option>
                   </select>
                 </div>
               </div>
 
               <div class="vl-field">
-                <label for="cantidad">Copias físicas: *</label>
+                <label for="ubicacion">Ubicación: *</label>
+                <div class="vl-input-wrap">
+                  <select
+                    id="ubicacion"
+                    name="ubicacion"
+                    [(ngModel)]="form.ubicacion"
+                    class="vl-select"
+                    required
+                  >
+                    @for (location of locations; track location.value) {
+                      <option [value]="location.value">{{ location.label }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            @if (addingCategory()) {
+              <div class="inline-add">
+                <div class="vl-field">
+                  <label for="nuevaCategoria">Nueva categoría:</label>
+                  <div class="vl-input-wrap">
+                    <input
+                      id="nuevaCategoria"
+                      name="nuevaCategoria"
+                      type="text"
+                      maxlength="100"
+                      [(ngModel)]="newCategory"
+                      placeholder="Ej: Poesía"
+                      (keydown.enter)="$event.preventDefault(); addCategory()"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="vl-btn vl-btn--primary"
+                  [disabled]="savingCategory() || !newCategory.trim()"
+                  (click)="addCategory()"
+                >
+                  {{ savingCategory() ? 'Agregando…' : 'Agregar' }}
+                </button>
+                <button type="button" class="vl-btn vl-btn--ghost" (click)="cancelCategory()">
+                  Cancelar
+                </button>
+              </div>
+            }
+
+            @if (form.ubicacion === 'web') {
+              <div class="vl-field">
+                <label for="url_lectura">URL donde lo estás leyendo: *</label>
                 <div class="vl-input-wrap">
                   <input
-                    id="cantidad"
-                    name="cantidad"
-                    type="number"
-                    min="0"
-                    [(ngModel)]="form.cantidad"
-                    placeholder="1"
+                    id="url_lectura"
+                    name="url_lectura"
+                    type="url"
+                    maxlength="500"
+                    [(ngModel)]="form.url_lectura"
+                    placeholder="https://..."
                     required
                   />
                 </div>
               </div>
-            </div>
+            }
 
             <!-- Páginas totales y leídas -->
             <div class="form-row-2">

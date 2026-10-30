@@ -13,24 +13,37 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '@core/api/api-error';
 import { AsyncState } from '@core/api/async-state';
-import { ApiBook, ApiReview } from '@core/models';
+import { ApiBook, ApiCollection, ApiReview, BOOK_LOCATIONS, BookLocation } from '@core/models';
 import { BookService } from '@core/services/book.service';
-import { ReviewService } from '@core/services/review.service';
+import { CollectionService } from '@core/services/collection.service';
+import { ConfirmDialog } from '@shared/components/confirm-dialog/confirm-dialog';
 import { EmptyState } from '@shared/components/empty-state/empty-state';
 import { ErrorBanner } from '@shared/components/error-banner/error-banner';
+import { ProgressBar } from '@shared/components/progress-bar/progress-bar';
 import { Spinner } from '@shared/components/spinner/spinner';
+import { AutorNombrePipe } from '@shared/pipes/autor-nombre.pipe';
 import { BvDatePipe } from '@shared/pipes/bv-date.pipe';
 
 @Component({
   selector: 'bv-book-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, FormsModule, Spinner, EmptyState, ErrorBanner, BvDatePipe],
+  imports: [
+    RouterLink,
+    FormsModule,
+    Spinner,
+    EmptyState,
+    ErrorBanner,
+    ConfirmDialog,
+    ProgressBar,
+    BvDatePipe,
+    AutorNombrePipe,
+  ],
   templateUrl: './book-detail.html',
   styleUrl: './book-detail.scss',
 })
 export class BookDetail {
   private readonly books = inject(BookService);
-  private readonly reviewService = inject(ReviewService);
+  private readonly collectionService = inject(CollectionService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -40,9 +53,10 @@ export class BookDetail {
   readonly numericId = computed(() => Number(this.bookId()));
 
   protected readonly state = new AsyncState<ApiBook>();
-  protected readonly allReviews = new AsyncState<ApiReview[]>();
+  protected readonly bookReviews = new AsyncState<ApiReview[]>();
   protected readonly actionError = signal<ApiError | null>(null);
   protected readonly deleting = signal(false);
+  protected readonly confirmingDelete = signal(false);
 
   // Edición interactiva de páginas
   protected readonly isEditingProgress = signal(false);
@@ -50,9 +64,13 @@ export class BookDetail {
   protected readonly editPaginasLeidas = signal(0);
   protected readonly savingProgress = signal(false);
 
-  protected readonly reviews = computed(() =>
-    (this.allReviews.data() ?? []).filter((review) => review.libro_id === this.numericId()),
-  );
+  // Agregar a colección
+  protected readonly collections = new AsyncState<ApiCollection[]>();
+  protected readonly collectionId = signal<number | ''>('');
+  protected readonly addingToCollection = signal(false);
+  protected readonly addedTo = signal<ApiCollection | null>(null);
+
+  protected readonly reviews = computed(() => this.bookReviews.data() ?? []);
 
   protected readonly averageRating = computed(() => {
     const reviews = this.reviews();
@@ -72,8 +90,38 @@ export class BookDetail {
     });
 
     effect(() => {
-      void this.allReviews.run(this.reviewService.list());
+      const id = this.numericId();
+      if (!isNaN(id)) {
+        void this.bookReviews.run(this.books.reviews(id));
+      }
     });
+
+    void this.collections.run(this.collectionService.list());
+  }
+
+  protected addToCollection(book: ApiBook): void {
+    const collectionId = this.collectionId();
+    if (collectionId === '' || this.addingToCollection()) {
+      return;
+    }
+    this.addingToCollection.set(true);
+    this.addedTo.set(null);
+    this.actionError.set(null);
+
+    this.collectionService
+      .addBook(collectionId, book.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (collection) => {
+          this.addedTo.set(collection);
+          this.collectionId.set('');
+          this.addingToCollection.set(false);
+        },
+        error: (err: ApiError) => {
+          this.actionError.set(err);
+          this.addingToCollection.set(false);
+        },
+      });
   }
 
   protected getPercentage(book: ApiBook | null): number {
@@ -138,6 +186,10 @@ export class BookDetail {
       });
   }
 
+  protected locationLabel(location: BookLocation): string {
+    return BOOK_LOCATIONS.find((item) => item.value === location)?.label ?? 'Físico';
+  }
+
   protected getCoverUrl(path: string | null | undefined): string | null {
     return this.books.getCoverUrl(path);
   }
@@ -158,6 +210,7 @@ export class BookDetail {
         error: (error: ApiError) => {
           this.actionError.set(error);
           this.deleting.set(false);
+          this.confirmingDelete.set(false);
         },
       });
   }

@@ -26,6 +26,11 @@
                 <span class="info-value info-value--title">{{ book.titulo }}</span>
               </div>
 
+              <div class="info-row">
+                <span class="info-label">Autor/es:</span>
+                <span class="info-value">{{ book.autores | autorNombre }}</span>
+              </div>
+
               <!-- Total de páginas -->
               <div class="info-row">
                 <span class="info-label">Total de páginas:</span>
@@ -63,11 +68,16 @@
               </div>
 
               <!-- Porcentaje sacado dinámicamente -->
-              <div class="info-row">
-                <span class="info-label">Porcentaje:</span>
-                <span class="info-value info-value--gold info-value--percentage">
-                  % {{ isEditingProgress() ? previewPercentage() : getPercentage(book) }}
-                </span>
+              <div class="info-row info-row--progress">
+                <span class="info-label">Progreso:</span>
+                <div class="progress-block">
+                  <bv-progress-bar
+                    [value]="isEditingProgress() ? previewPercentage() : getPercentage(book)"
+                  />
+                  <span class="info-value info-value--percentage">
+                    {{ isEditingProgress() ? previewPercentage() : getPercentage(book) }}%
+                  </span>
+                </div>
               </div>
 
               <!-- Botones de cambiar páginas / guardar páginas -->
@@ -80,7 +90,7 @@
                   <div class="progress-edit-btns">
                     <button
                       type="button"
-                      class="btn-progress-save"
+                      class="vl-btn vl-btn--primary"
                       [disabled]="savingProgress()"
                       (click)="saveProgress(book.id)"
                     >
@@ -88,7 +98,7 @@
                     </button>
                     <button
                       type="button"
-                      class="btn-progress-cancel"
+                      class="vl-btn vl-btn--ghost"
                       [disabled]="savingProgress()"
                       (click)="cancelEditingProgress()"
                     >
@@ -101,7 +111,10 @@
               <div class="info-row">
                 <span class="info-label">Ubicación:</span>
                 <span class="info-value info-value--gold">
-                  (Física · {{ book.cantidad > 0 ? book.cantidad + ' ejemplares' : 'Sin copias' }})
+                  {{ locationLabel(book.ubicacion) }}
+                  @if (book.ubicacion === 'web' && book.url_lectura) {
+                    · <a [href]="book.url_lectura" target="_blank" rel="noopener noreferrer">Abrir lectura ↗</a>
+                  }
                 </span>
               </div>
 
@@ -123,18 +136,61 @@
 
             <!-- Actions -->
             <div class="book-actions">
-              <a [routerLink]="['/libros', book.id, 'editar']" class="vl-btn-action">
+              <a [routerLink]="['/libros', book.id, 'editar']" class="vl-btn">
                 Editar libro
               </a>
               <button
                 type="button"
-                class="vl-btn-action vl-btn-action--danger"
+                class="vl-btn vl-btn--danger"
                 [disabled]="deleting()"
-                (click)="remove()"
+                (click)="confirmingDelete.set(true)"
               >
-                {{ deleting() ? 'Eliminando…' : 'Eliminar libro' }}
+                Eliminar libro
               </button>
             </div>
+
+            <bv-confirm-dialog
+              [open]="confirmingDelete()"
+              [title]="'¿Eliminar «' + book.titulo + '»?'"
+              message="Se borra del catálogo junto con sus reseñas y deja de estar en tus colecciones. No se puede deshacer."
+              confirmLabel="Eliminar libro"
+              [busy]="deleting()"
+              (confirmed)="remove()"
+              (cancelled)="confirmingDelete.set(false)"
+            />
+
+            <!-- Agregar el libro a una colección propia -->
+            <form class="collection-add" (ngSubmit)="addToCollection(book)" novalidate>
+              <label for="coleccion" class="info-label">Agregar a colección:</label>
+              @if ((collections.data() ?? []).length === 0 && !collections.loading()) {
+                <a routerLink="/colecciones" class="collection-add__link">Crear una colección</a>
+              } @else {
+                <select
+                  id="coleccion"
+                  name="coleccion"
+                  class="collection-add__select"
+                  [ngModel]="collectionId()"
+                  (ngModelChange)="collectionId.set($event)"
+                >
+                  <option [ngValue]="''">Elegí una colección</option>
+                  @for (collection of collections.data() ?? []; track collection.id) {
+                    <option [ngValue]="collection.id">{{ collection.nombre }}</option>
+                  }
+                </select>
+                <button
+                  type="submit"
+                  class="vl-btn vl-btn--primary"
+                  [disabled]="addingToCollection() || collectionId() === ''"
+                >
+                  {{ addingToCollection() ? 'Agregando…' : 'Agregar' }}
+                </button>
+              }
+              @if (addedTo(); as added) {
+                <span class="collection-add__ok" role="status">
+                  Agregado a <a [routerLink]="['/colecciones', added.id]">{{ added.nombre }}</a>
+                </span>
+              }
+            </form>
 
             <bv-error-banner [error]="actionError()" />
           </div>
@@ -181,6 +237,10 @@
       <!-- Reviews Section -->
       <div class="vl-panel reviews-panel">
         <h2 class="reviews-title">Reseñas de la comunidad</h2>
+        <p class="reviews-hint">
+          Incluye las reseñas de otros lectores que cargaron este mismo libro, aunque lo hayan
+          escrito con o sin tildes, en mayúsculas o con algún error.
+        </p>
 
         @if (averageRating(); as average) {
           <p class="reviews-rating-summary">

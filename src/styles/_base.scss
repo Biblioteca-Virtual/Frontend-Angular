@@ -18,7 +18,9 @@ body {
   line-height: 1.55;
   color: var(--bv-text);
   background-color: #b7d5eb;
-  background-image: url('/assets/images/sky-bg.jpg');
+  background-image:
+    linear-gradient(var(--vl-bg-dim), var(--vl-bg-dim)),
+    url('/assets/images/sky-bg.jpg');
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
@@ -268,17 +270,117 @@ a {
   color: #000;
   margin-bottom: var(--bv-space-4);
   z-index: 1;
+  padding: 0.05em 0.1em 0.1em;
 
+  // El resaltado cubre el título completo para que ninguna parte de las
+  // letras quede sobre la foto.
   &::before {
     content: '';
     position: absolute;
-    left: -6px;
-    right: -6px;
-    bottom: 6px;
-    height: 48%;
+    inset: 0 -10px;
     background-color: var(--vl-highlight);
+    border-radius: 3px;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 18%);
     z-index: -1;
   }
+}
+
+// Botones de la interfaz Virtual Library.
+//   .vl-btn               secundario dorado (acciones normales)
+//   .vl-btn--primary      azul, para guardar o confirmar
+//   .vl-btn--ghost        gris, para cancelar
+//   .vl-btn--danger       rojo suave, abre una confirmación
+//   .vl-btn--danger-solid rojo fuerte, confirma un borrado
+//   .vl-btn--sm           compacto, para acciones dentro de listas
+.vl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.15rem;
+  background-color: #ebd296;
+  color: #2b220d;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #dfc27e;
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background-color: var(--vl-primary);
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background-color: var(--vl-primary-hover);
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
+    border-color: rgb(0 0 0 / 18%);
+    color: #333;
+
+    &:hover:not(:disabled) {
+      background-color: rgb(0 0 0 / 6%);
+    }
+  }
+
+  &--danger {
+    background-color: #f7d2d2;
+    color: #8c1d1d;
+
+    &:hover:not(:disabled) {
+      background-color: #f0bebe;
+    }
+  }
+
+  &--danger-solid {
+    background-color: var(--vl-danger);
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background-color: var(--vl-danger-hover);
+    }
+  }
+
+  &--sm {
+    padding: 0.25rem 0.65rem;
+    font-size: 0.8rem;
+  }
+}
+
+// Píldora de vidrio esmerilado para texto que va directo sobre la foto de
+// fondo. Es el mismo lenguaje visual que la barra de navegación.
+.vl-glass {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  background: rgb(255 255 255 / 68%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgb(15 23 42 / 12%);
 }
 
 .vl-panel {

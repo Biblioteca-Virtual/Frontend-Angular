@@ -24,36 +24,65 @@
             <span>Ingresar a toda la biblioteca</span>
           </button>
 
-          <div class="vl-search-group">
-            <!-- Search by Title con icono busqueda.svg -->
-            <div class="vl-field">
-              <label for="bookTitle">Búsqueda por título:</label>
-              <div class="vl-input-wrap">
-                <img src="/assets/images/busqueda.svg" class="vl-input-icon" alt="" aria-hidden="true" />
-                <input
-                  id="bookTitle"
-                  type="text"
-                  [ngModel]="titleSearch()"
-                  (ngModelChange)="titleSearch.set($event)"
-                  placeholder="Ingrese el título"
-                />
-              </div>
-            </div>
+          <form class="vl-search-group" (ngSubmit)="search()" novalidate>
+            <!-- Al tocar "Buscar" se despliegan los campos de título y autor -->
+            <button
+              type="button"
+              class="vl-btn-gold vl-search-toggle"
+              aria-controls="vl-search-fields"
+              [attr.aria-expanded]="searchOpen()"
+              (click)="toggleSearch()"
+            >
+              <img src="/assets/images/busqueda.svg" alt="" aria-hidden="true" />
+              <span>Buscar por título o autor</span>
+              <svg class="vl-chevron-icon" [class.vl-chevron-icon--open]="searchOpen()" viewBox="0 0 24 24" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2.5" fill="none" />
+              </svg>
+            </button>
 
-            <!-- Search by Author con icono usuario.svg -->
-            <div class="vl-field">
-              <label for="bookAuthor">Búsqueda por autor:</label>
-              <div class="vl-input-wrap">
-                <img src="/assets/images/usuario.svg" class="vl-input-icon" alt="" aria-hidden="true" />
-                <input
-                  id="bookAuthor"
-                  type="text"
-                  [ngModel]="authorSearch()"
-                  (ngModelChange)="authorSearch.set($event)"
-                  placeholder="Ingrese autor"
-                />
+            @if (searchOpen()) {
+              <div id="vl-search-fields" class="vl-search-fields">
+                <!-- Search by Title con icono busqueda.svg -->
+                <div class="vl-field">
+                  <label for="bookTitle">Búsqueda por título:</label>
+                  <div class="vl-input-wrap">
+                    <img src="/assets/images/busqueda.svg" class="vl-input-icon" alt="" aria-hidden="true" />
+                    <input
+                      id="bookTitle"
+                      name="bookTitle"
+                      type="search"
+                      [ngModel]="titleSearch()"
+                      (ngModelChange)="titleSearch.set($event)"
+                      placeholder="Ingrese el título"
+                    />
+                  </div>
+                </div>
+
+                <!-- Search by Author con icono usuario.svg -->
+                <div class="vl-field">
+                  <label for="bookAuthor">Búsqueda por autor:</label>
+                  <div class="vl-input-wrap">
+                    <img src="/assets/images/usuario.svg" class="vl-input-icon" alt="" aria-hidden="true" />
+                    <input
+                      id="bookAuthor"
+                      name="bookAuthor"
+                      type="search"
+                      [ngModel]="authorSearch()"
+                      (ngModelChange)="authorSearch.set($event)"
+                      placeholder="Ingrese autor"
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" class="vl-btn vl-btn--primary vl-search-btn">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M20 20l-3.5-3.5" stroke-linecap="round" />
+                  </svg>
+                  <span>Buscar</span>
+                </button>
               </div>
-            </div>
+            }
 
             <!-- Search / Filter by Category (matches Categorias.svg) -->
             <div class="vl-field">
@@ -90,21 +119,23 @@
                 }
               </div>
             </div>
-          </div>
+
+          </form>
         </div>
 
         <!-- Collections Section with Blue Folder Buttons -->
         <div class="collections-section">
-          <h2 class="collections-title">Colecciones</h2>
+          <h2 class="collections-title vl-glass">
+            <a routerLink="/colecciones">Colecciones</a>
+          </h2>
           <div class="vl-folder-actions">
-            <bv-folder-button
-              label="Coleccion1"
-              (clicked)="selectCollection('Coleccion1')"
-            />
-            <bv-folder-button
-              label="Coleccion 2"
-              (clicked)="selectCollection('Coleccion 2')"
-            />
+            @for (collection of collections.data() ?? []; track collection.id) {
+              <bv-folder-button
+                [label]="collection.nombre"
+                [routerLink]="['/colecciones', collection.id]"
+              />
+            }
+            <bv-folder-button label="Agregar colección" routerLink="/colecciones" />
             <bv-folder-button
               label="Agregar libro"
               routerLink="/libros/nuevo"
@@ -122,10 +153,12 @@
               <span>Biblioteca completa</span>
             </button>
 
-            @if (selectedCollection()) {
-              <span class="active-collection-badge">
-                Filtro: {{ selectedCollection() }}
-                <button type="button" (click)="selectedCollection.set(null)" class="badge-close">×</button>
+            @if (hasFilters()) {
+              <span class="active-filters">
+                {{ filteredBooks().length }} {{ filteredBooks().length === 1 ? 'resultado' : 'resultados' }}
+                <button type="button" class="vl-btn vl-btn--ghost vl-btn--sm" (click)="clearFilters()">
+                  Limpiar búsqueda
+                </button>
               </span>
             }
           </div>
@@ -166,6 +199,13 @@
                         </div>
                       }
                     </div>
+                    <bv-progress-bar
+                      class="book-grid-progress"
+                      size="sm"
+                      [value]="book.porcentaje_lectura"
+                      [label]="'Leído ' + (book.porcentaje_lectura) + '%'"
+                      [title]="'Leído ' + (book.porcentaje_lectura) + '%'"
+                    />
                     <span class="book-grid-title" [title]="book.titulo">{{ book.titulo }}</span>
                   </a>
                 }

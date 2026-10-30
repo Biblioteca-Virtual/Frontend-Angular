@@ -1,0 +1,152 @@
+<div class="tree-page">
+  <h1 class="vl-highlight-title">Árbol de lectura</h1>
+
+  <div class="tree-grid">
+    <section class="vl-panel tree-panel">
+      <p class="tree-panel__hint">
+        Agarrá una hoja del árbol y descubrí tu próxima lectura. Solo salen los libros que
+        todavía no terminaste.
+      </p>
+
+      @if (catalog.isInitialLoading()) {
+        <bv-spinner label="Cargando tu biblioteca…" />
+      } @else {
+        <svg
+          class="tree"
+          viewBox="0 0 420 470"
+          role="group"
+          [attr.aria-label]="'Árbol con ' + leaves().length + ' hojas para elegir'"
+        >
+          <!-- Loma de pasto -->
+          <path class="tree__grass" d="M30 440 C 100 404, 320 404, 392 440 C 330 462, 92 462, 30 440 Z" />
+          <path class="tree__tufts" d="M120 424 l -6 -12 M126 424 l 2 -14 M300 426 l 6 -12 M294 426 l -2 -13 M210 418 l 0 -12 M216 418 l 5 -10" />
+
+          <!-- Tronco retorcido con raíces -->
+          <path
+            class="tree__trunk"
+            d="M150 434 C 176 426, 186 410, 190 396 C 196 360, 200 330, 194 300 C 189 282, 170 266, 148 252
+               L 160 242 C 182 254, 199 268, 207 284 C 212 264, 226 250, 247 240 L 257 251
+               C 236 262, 223 280, 221 300 C 218 336, 224 372, 232 398 C 238 412, 250 426, 276 434 Z"
+          />
+          <path class="tree__bark" d="M204 296 C 198 336, 204 376, 214 414 M214 300 C 214 336, 220 370, 230 404" />
+
+          <defs>
+            <!-- Las luces y sombras se difuminan y se recortan a la forma de la copa -->
+            <clipPath id="tree-crown-clip">
+              @for (c of crown; track $index) {
+                <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
+              }
+            </clipPath>
+            <filter id="tree-soft" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="9" />
+            </filter>
+          </defs>
+
+          <!-- Copa: primero el contorno, después el relleno, sombras y luces -->
+          <g class="tree__crown-outline">
+            @for (c of crown; track $index) {
+              <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
+            }
+          </g>
+          <g class="tree__crown">
+            @for (c of crown; track $index) {
+              <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
+            }
+          </g>
+          <g clip-path="url(#tree-crown-clip)">
+            <g class="tree__shade" filter="url(#tree-soft)">
+              @for (c of shade; track $index) {
+                <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
+              }
+            </g>
+            <g class="tree__light" filter="url(#tree-soft)">
+              @for (c of light; track $index) {
+                <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
+              }
+            </g>
+          </g>
+
+          <!-- Hojas que se pueden agarrar -->
+          @for (leaf of leaves(); track leaf.index) {
+            <g
+              [attr.transform]="
+                'translate(' + leaf.x + ' ' + leaf.y + ') rotate(' + leaf.tilt + ') scale(1.4)'
+              "
+            >
+              <g
+                class="leaf"
+                [class.leaf--falling]="pickedLeaf() === leaf.index"
+                [class.leaf--hidden]="pickedLeaf() !== null && pickedLeaf() !== leaf.index && picking()"
+                [style.animation-delay.ms]="leaf.index * 180"
+                role="button"
+                [attr.tabindex]="picking() ? -1 : 0"
+                [attr.aria-label]="'Agarrar la hoja ' + (leaf.index + 1)"
+                [attr.aria-disabled]="picking()"
+                (click)="pick(leaf.index)"
+                (keydown.enter)="pick(leaf.index)"
+                (keydown.space)="$event.preventDefault(); pick(leaf.index)"
+              >
+                <line class="leaf__stem" x1="0" y1="-12" x2="0" y2="0" />
+                <path class="leaf__blade" d="M0 0 C 12 7, 14 24, 0 38 C -14 24, -12 7, 0 0 Z" />
+                <path class="leaf__vein" d="M0 4 L 0 33 M0 14 L 6 10 M0 22 L -6 18 M0 28 L 5 24" />
+              </g>
+            </g>
+          }
+        </svg>
+
+        @if (pendingCount() === 0) {
+          <p class="tree-panel__empty">
+            @if ((catalog.data() ?? []).length === 0) {
+              Tu árbol todavía no tiene hojas. <a routerLink="/libros/nuevo">Agregá tu primer libro</a>.
+            } @else {
+              ¡Terminaste todos tus libros! <a routerLink="/libros/nuevo">Agregá uno nuevo</a> para que
+              crezcan hojas.
+            }
+          </p>
+        } @else {
+          <p class="tree-panel__count">
+            {{ pendingCount() }} {{ pendingCount() === 1 ? 'libro pendiente' : 'libros pendientes' }}
+          </p>
+        }
+      }
+
+      <bv-error-banner [error]="catalog.error() ?? error()" />
+    </section>
+
+    <section class="vl-panel result-panel" aria-live="polite">
+      @if (result(); as book) {
+        <p class="result-panel__kicker">¡Tu próxima lectura!</p>
+        <div class="result-panel__book">
+          <div class="result-panel__cover">
+            @if (getCoverUrl(book.imagen_portada); as url) {
+              <img [src]="url" [alt]="'Portada de ' + book.titulo" />
+            } @else {
+              <span aria-hidden="true">📖</span>
+            }
+          </div>
+          <div>
+            <h2 class="result-panel__title">{{ book.titulo }}</h2>
+            <p class="result-panel__meta">
+              {{ book.categoria.nombre || 'General' }}
+              @if (book.paginas_totales) {
+                · {{ book.paginas_leidas }} de {{ book.paginas_totales }} páginas
+              }
+            </p>
+          </div>
+        </div>
+        <p class="result-panel__desc">
+          {{ book.descripcion || 'Este libro no tiene descripción todavía.' }}
+        </p>
+        <div class="result-panel__actions">
+          <a [routerLink]="['/libros', book.id]" class="vl-btn vl-btn--primary">Ver el libro</a>
+          <button type="button" class="vl-btn" (click)="reset()">Agarrar otra hoja</button>
+        </div>
+      } @else {
+        <p class="result-panel__kicker">Tu próxima lectura</p>
+        <p class="result-panel__placeholder">
+          {{ picking() ? 'La hoja está cayendo…' : 'Tocá una hoja del árbol para descubrirla.' }}
+        </p>
+      }
+    </section>
+  </div>
+</div>

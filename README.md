@@ -1,3 +1,4 @@
+-- Active: 1790174821309@@127.0.0.1@5432@biblioteca_db
 <!-- calidad:inicio -->
 ![Calidad](https://img.shields.io/badge/Calidad-21%2F100-red) ![Aprobado](https://img.shields.io/badge/Aprobado-NO-red) ![Cumple](https://img.shields.io/badge/Cumple-10%2F14-yellow) ![Duplicación](https://img.shields.io/badge/Duplicaci%C3%B3n-2.5%25-green) ![SEC](https://img.shields.io/badge/SEC-0-green) ![SQL](https://img.shields.io/badge/SQL-0-green) ![DBG](https://img.shields.io/badge/DBG-0-green) ![Capas](https://img.shields.io/badge/Capas-2-green) ![Tests](https://img.shields.io/badge/Tests-3-orange) ![Cob](https://img.shields.io/badge/Cob-n%2Fa-lightgrey) ![Vistas](https://img.shields.io/badge/Vistas-7-orange)
 
