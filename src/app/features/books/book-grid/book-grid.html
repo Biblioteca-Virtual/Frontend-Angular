@@ -1,0 +1,77 @@
+<!-- Complete Library View (matches Toda biblioteca.svg) -->
+<div class="vl-panel vl-panel--full-catalog">
+  <div class="vl-panel__top-bar">
+    <button type="button" class="vl-back-title vl-back-title--btn" (click)="back.emit()">
+      <svg viewBox="0 0 24 24">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span>Biblioteca completa</span>
+    </button>
+
+    @if (filters().active()) {
+      <span class="active-filters">
+        {{ books().length }} {{ books().length === 1 ? 'resultado' : 'resultados' }}
+        <button type="button" class="vl-btn vl-btn--ghost vl-btn--sm" (click)="filters().clear()">
+          Limpiar búsqueda
+        </button>
+      </span>
+    }
+  </div>
+
+  <bv-error-banner [error]="error()" />
+
+  @if (loading()) {
+    <bv-spinner label="Cargando libros…" />
+  } @else {
+    @if (books().length === 0) {
+      <bv-empty-state
+        title="No se encontraron libros"
+        description="Intenta buscar con otros términos o agrega un nuevo libro."
+      />
+    } @else {
+      <div class="books-grid">
+        @for (book of books(); track book.id) {
+          <a [routerLink]="['/libros', book.id]" class="book-grid-card">
+            <div class="book-cover-frame" [class.vl-crystal]="book.porcentaje_lectura >= 100">
+              @if (resolveCover(book.imagen_portada); as coverUrl) {
+                <img [src]="coverUrl" [alt]="book.titulo" class="book-cover-thumbnail" />
+              } @else {
+                <div class="book-cover-graphic">
+                  <svg viewBox="0 0 90 115" class="book-svg" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="bookSky" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#b8e3fa" />
+                        <stop offset="60%" stop-color="#d4effc" />
+                        <stop offset="100%" stop-color="#a8dc6e" />
+                      </linearGradient>
+                    </defs>
+                    <rect width="90" height="115" rx="3" fill="url(#bookSky)" />
+                    <circle cx="45" cy="40" r="14" fill="#ffffff" fill-opacity="0.9" />
+                    <circle cx="34" cy="42" r="10" fill="#ffffff" fill-opacity="0.9" />
+                    <circle cx="56" cy="42" r="10" fill="#ffffff" fill-opacity="0.9" />
+                    <path d="M 0 92 Q 45 75 90 92 L 90 115 L 0 115 Z" fill="#7fa615" />
+                  </svg>
+                </div>
+              }
+            </div>
+            <bv-progress-bar
+              class="book-grid-progress"
+              size="sm"
+              [value]="book.porcentaje_lectura"
+              [label]="'Leído ' + book.porcentaje_lectura + '%'"
+              [title]="'Leído ' + book.porcentaje_lectura + '%'"
+            />
+            <span class="book-grid-title" [title]="book.titulo">{{ book.titulo }}</span>
+          </a>
+        }
+      </div>
+    }
+
+    <div class="add-book-row">
+      <a routerLink="/libros/nuevo" class="add-book-btn">
+        <span class="add-plus" aria-hidden="true">+</span>
+        <span>Agregar libro</span>
+      </a>
+    </div>
+  }
+</div>

@@ -1,0 +1,20 @@
+// Campo con botón al costado para dar de alta algo sin salir del formulario.
+.inline-add {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+
+  .vl-field {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .vl-field input {
+    padding-left: 1rem;
+  }
+}
+
+.inline-add--tight {
+  margin-bottom: 0;
+}

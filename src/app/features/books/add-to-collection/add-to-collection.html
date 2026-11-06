@@ -1,0 +1,31 @@
+<form class="collection-add" (ngSubmit)="add()" novalidate>
+  <label for="coleccion" class="info-label">Agregar a colección:</label>
+  @if ((collections.data() ?? []).length === 0 && !collections.loading()) {
+    <a routerLink="/colecciones" class="collection-add__link">Crear una colección</a>
+  } @else {
+    <select
+      id="coleccion"
+      name="coleccion"
+      class="collection-add__select"
+      [ngModel]="collectionId()"
+      (ngModelChange)="collectionId.set($event)"
+    >
+      <option [ngValue]="''">Elegí una colección</option>
+      @for (collection of collections.data() ?? []; track collection.id) {
+        <option [ngValue]="collection.id">{{ collection.nombre }}</option>
+      }
+    </select>
+    <button
+      type="submit"
+      class="vl-btn vl-btn--primary"
+      [disabled]="adding() || collectionId() === ''"
+    >
+      {{ adding() ? 'Agregando…' : 'Agregar' }}
+    </button>
+  }
+  @if (addedTo(); as added) {
+    <span class="collection-add__ok" role="status">
+      Agregado a <a [routerLink]="['/colecciones', added.id]">{{ added.nombre }}</a>
+    </span>
+  }
+</form>

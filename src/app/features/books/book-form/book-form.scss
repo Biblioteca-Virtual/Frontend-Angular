@@ -34,62 +34,6 @@
   gap: 1rem;
 }
 
-.inline-add {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.6rem;
-  margin-bottom: 1.1rem;
-
-  .vl-field {
-    flex: 1;
-    margin-bottom: 0;
-  }
-
-  .vl-field input {
-    padding-left: 1rem;
-  }
-}
-
-.inline-add--tight {
-  margin-bottom: 0;
-}
-
-.author-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin: 0 0 0.5rem;
-  padding: 0;
-  list-style: none;
-
-  li {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.4rem 0.25rem 0.75rem;
-    background: #ebd296;
-    border-radius: 999px;
-    font-size: 0.9rem;
-    color: #2b220d;
-  }
-
-  button {
-    width: 1.4rem;
-    height: 1.4rem;
-    border: none;
-    border-radius: 50%;
-    background: rgb(0 0 0 / 10%);
-    font-size: 1rem;
-    line-height: 1;
-    cursor: pointer;
-
-    &:hover {
-      background: #f0bebe;
-      color: #8c1d1d;
-    }
-  }
-}
-
 .vl-select {
   width: 100%;
   padding: 0.7rem 1rem;
@@ -140,68 +84,6 @@
       color: #0b4f9c;
     }
   }
-}
-
-.cover-upload-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.25rem;
-}
-
-.cover-thumb-preview {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-
-  img {
-    width: 75px;
-    height: 105px;
-    object-fit: cover;
-    border-radius: 6px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-
-  .btn-remove-thumb {
-    padding: 0.35rem 0.75rem;
-    background: #ff4d4f;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: #cf1322;
-    }
-  }
-}
-
-.btn-file-picker {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.65rem 1.25rem;
-  background-color: var(--vl-input-gold);
-  border: 1px dashed #b88628;
-  border-radius: 6px;
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: #2b220d;
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-
-  &:hover {
-    background-color: var(--vl-input-gold-hover);
-    border-color: #8c6218;
-  }
-}
-
-.upload-error {
-  color: #d32f2f;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
 }
 
 .vl-textarea {

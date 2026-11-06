@@ -13,7 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ApiError } from '@core/api/api-error';
-import { AsyncState } from '@core/api/async-state';
+import { resolveCoverUrl } from '@core/api/cover-url';
+import { AsyncState } from '@core/state/async-state';
 import { ApiBook, ApiCollection } from '@core/models';
 import { BookService } from '@core/services/book.service';
 import { CollectionService } from '@core/services/collection.service';
@@ -22,7 +23,13 @@ import { ErrorBanner } from '@shared/components/error-banner/error-banner';
 import { Spinner } from '@shared/components/spinner/spinner';
 import { WindowCard } from '@shared/components/window-card/window-card';
 
-/** Contenido de una colección (Adentro de colecciones.svg). */
+/**
+ * Contenido de una colección (Adentro de colecciones.svg).
+ *
+ * `available` son los libros del catálogo que todavía no están en la colección.
+ * La portada es la del primer libro que tenga una. `mutate` ejecuta una
+ * modificación que devuelve la colección actualizada.
+ */
 @Component({
   selector: 'bv-collection-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,7 +43,6 @@ export class CollectionDetail {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Parámetro de ruta `colecciones/:collectionId`. */
   readonly collectionId = input.required<number | string>();
 
   readonly numericId = computed(() => Number(this.collectionId()));
@@ -51,16 +57,14 @@ export class CollectionDetail {
   protected readonly nombre = signal('');
   protected readonly libroId = signal<number | ''>('');
 
-  /** Libros del catálogo que todavía no están en la colección. */
   protected readonly available = computed(() => {
     const inside = new Set((this.state.data()?.libros ?? []).map((book) => book.id));
     return (this.catalog.data() ?? []).filter((book) => !inside.has(book.id));
   });
 
-  /** La portada de la colección es la del primer libro que tenga una. */
   protected readonly coverUrl = computed(() => {
     const withCover = (this.state.data()?.libros ?? []).find((book) => book.imagen_portada);
-    return this.books.getCoverUrl(withCover?.imagen_portada);
+    return resolveCoverUrl(withCover?.imagen_portada);
   });
 
   constructor() {
@@ -127,7 +131,6 @@ export class CollectionDetail {
       });
   }
 
-  /** Ejecuta una modificación que devuelve la colección actualizada. */
   private mutate(request: Observable<ApiCollection>, onSuccess?: () => void): void {
     if (this.busy()) {
       return;

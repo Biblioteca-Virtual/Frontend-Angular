@@ -15,19 +15,19 @@ const USER_KEY = 'bv.usuario';
  * no se toma ninguna decision de seguridad a partir de ese dato, solo se evita
  * mostrar la interfaz de sesion con un token que el backend va a rechazar. La
  * unica validacion que importa la hace el servidor en cada peticion.
+ *
+ * Si `localStorage` esta bloqueado (modo privado), la sesion no persiste y dura
+ * lo que dure la pestaña. El usuario cacheado puede estar desactualizado; se
+ * refresca con `AuthService.me()`. `clear` es local: el backend no tiene logout.
  */
 @Injectable({ providedIn: 'root' })
 export class TokenStorageService {
   private readonly _token = signal<string | null>(this.read(TOKEN_KEY));
   private readonly _user = signal<ApiUser | null>(this.readJson<ApiUser>(USER_KEY));
 
-  /** Token actual, o `null` si no hay sesion. */
   readonly token = this._token.asReadonly();
-
-  /** Usuario cacheado. Puede estar desactualizado; usar `AuthService.me()` para refrescarlo. */
   readonly user = this._user.asReadonly();
 
-  /** `true` si hay token y su `exp` sigue en el futuro. */
   readonly isAuthenticated = computed(() => {
     const token = this._token();
     return token !== null && !isTokenExpired(token);
@@ -45,7 +45,6 @@ export class TokenStorageService {
     writeJson(USER_KEY, user);
   }
 
-  /** Cierra la sesion. Es local: el backend no tiene logout. */
   clear(): void {
     this._token.set(null);
     this._user.set(null);
@@ -57,7 +56,6 @@ export class TokenStorageService {
     try {
       return localStorage.getItem(key);
     } catch {
-      // Modo privado o almacenamiento bloqueado: la sesion no persistira.
       return null;
     }
   }

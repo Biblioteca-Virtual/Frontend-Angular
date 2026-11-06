@@ -1,0 +1,33 @@
+<bv-error-banner [error]="error()" />
+
+<form class="review-form" (ngSubmit)="publish()" novalidate>
+  <div class="review-form__field">
+    <label>Calificación</label>
+    <bv-star-rating [(value)]="rating" />
+  </div>
+
+  <div class="review-form__field">
+    <label for="review-comment">Comentario (opcional)</label>
+    <textarea
+      id="review-comment"
+      name="comentario"
+      rows="4"
+      [ngModel]="comment()"
+      (ngModelChange)="comment.set($event)"
+    ></textarea>
+  </div>
+
+  <div class="review-form__actions">
+    <button type="submit" class="vl-btn vl-btn--primary" [disabled]="publishing()">
+      {{ publishing() ? 'Publicando…' : 'Publicar reseña' }}
+    </button>
+    <button
+      type="button"
+      class="vl-btn vl-btn--ghost"
+      [disabled]="publishing()"
+      (click)="cancelled.emit()"
+    >
+      Cancelar
+    </button>
+  </div>
+</form>

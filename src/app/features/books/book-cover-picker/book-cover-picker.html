@@ -1,0 +1,39 @@
+<!-- Portada del libro (Storage) -->
+<div class="vl-field">
+  <label>Portada del libro:</label>
+  <div class="cover-upload-section">
+    @if (path()) {
+      <div class="cover-thumb-preview">
+        <img [src]="resolveCover(path())" alt="Portada del libro" />
+        <button
+          type="button"
+          class="btn-remove-thumb"
+          (click)="path.set('')"
+          title="Quitar portada"
+        >
+          ✕ Quitar
+        </button>
+      </div>
+    }
+    <div class="cover-upload-action">
+      <label class="btn-file-picker">
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/svg+xml"
+          (change)="onFileSelected($event)"
+          style="display: none"
+        />
+        <span>{{
+          uploading()
+            ? 'Subiendo imagen…'
+            : path()
+              ? 'Cambiar imagen de portada'
+              : 'Subir imagen de portada'
+        }}</span>
+      </label>
+      @if (uploadError()) {
+        <p class="upload-error">{{ uploadError() }}</p>
+      }
+    </div>
+  </div>
+</div>

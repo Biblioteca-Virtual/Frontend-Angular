@@ -1,0 +1,62 @@
+// Las filas siguen siendo hijas directas de la lista de datos de la ficha.
+:host {
+  display: contents;
+}
+
+.info-row--progress {
+  align-items: center;
+}
+
+.progress-block {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 320px;
+
+  bv-progress-bar {
+    flex: 1;
+  }
+}
+
+.inline-pages-input {
+  width: 110px;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #c99335;
+  border-radius: 4px;
+  background-color: #fff8e8;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2b220d;
+  outline: none;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(229, 172, 49, 0.4);
+  }
+}
+
+.progress-actions {
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn-progress-toggle {
+  background: none;
+  border: 1px dashed #d4973b;
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #8c6019;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: #f7e6bc;
+  }
+}
+
+.progress-edit-btns {
+  display: flex;
+  gap: 0.75rem;
+}

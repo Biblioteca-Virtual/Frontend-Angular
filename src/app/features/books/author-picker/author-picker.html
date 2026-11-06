@@ -1,0 +1,46 @@
+<!-- Autores: se eligen de la lista o se agregan nuevos -->
+<div class="vl-field">
+  <label for="autor">Autor/es:</label>
+  @if (selected().length > 0) {
+    <ul class="author-chips">
+      @for (author of selected(); track author.id) {
+        <li>
+          <span>{{ author | autorNombre }}</span>
+          <button
+            type="button"
+            [attr.aria-label]="'Quitar a ' + (author | autorNombre)"
+            (click)="remove(author.id)"
+          >
+            ×
+          </button>
+        </li>
+      }
+    </ul>
+  }
+  <div class="inline-add inline-add--tight">
+    <div class="vl-field">
+      <div class="vl-input-wrap">
+        <input
+          id="autor"
+          name="autor"
+          type="text"
+          list="bv-authors"
+          maxlength="200"
+          autocomplete="off"
+          [ngModel]="text()"
+          (ngModelChange)="text.set($event)"
+          placeholder="Ej: Gabriel García Márquez"
+          (keydown.enter)="$event.preventDefault(); add()"
+        />
+        <datalist id="bv-authors">
+          @for (author of known(); track author.id) {
+            <option [value]="author | autorNombre"></option>
+          }
+        </datalist>
+      </div>
+    </div>
+    <button type="button" class="vl-btn" [disabled]="saving() || !text().trim()" (click)="add()">
+      {{ saving() ? 'Agregando…' : '+ Agregar autor' }}
+    </button>
+  </div>
+</div>
