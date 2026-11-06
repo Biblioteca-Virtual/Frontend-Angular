@@ -1,0 +1,54 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 0.1em;
+  font-size: 1.15rem;
+  line-height: 0;
+
+  &--interactive {
+    font-size: 2.25rem;
+    cursor: pointer;
+    border-radius: 4px;
+
+    &:focus-visible {
+      outline: 2px solid #0b4f9c;
+      outline-offset: 3px;
+    }
+  }
+}
+
+.star {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  color: #cfcfcf;
+}
+
+.star__icon {
+  display: block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
+// Copia dorada de la estrella, recortada al ancho de la calificación.
+.star__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+  color: #ffb400;
+  pointer-events: none;
+}
+
+.value {
+  min-width: 3.5em;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #555;
+}

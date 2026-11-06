@@ -16,6 +16,9 @@ export const API_ENDPOINTS = {
     register: `${API_URL}/api/auth/register`,
     login: `${API_URL}/api/auth/login`,
     me: `${API_URL}/api/auth/me`,
+    verifySession: `${API_URL}/api/auth/verify-session`,
+    sessionStatus: `${API_URL}/api/auth/session-status`,
+    resendSessionEmail: `${API_URL}/api/auth/resend-session-email`,
   },
 
   /** Barra final obligatoria. */

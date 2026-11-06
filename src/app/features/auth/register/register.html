@@ -35,6 +35,13 @@
 
         <bv-error-banner [error]="error()" />
 
+        @if (pending(); as session) {
+          <bv-session-pending
+            [pending]="session"
+            (verified)="onVerified()"
+            (cancel)="cancelPending()"
+          />
+        } @else {
         <form id="registerForm" [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <div class="form-row-2">
             <div class="vl-field">
@@ -122,16 +129,19 @@
             }
           </div>
         </form>
+        }
       </div>
 
       <!-- Blue Folder Action Buttons underneath card -->
       <div class="vl-folder-actions">
-        <bv-folder-button
-          label="Registrarse"
-          type="submit"
-          [disabled]="submitting()"
-          (clicked)="submit()"
-        />
+        @if (pending() === null) {
+          <bv-folder-button
+            label="Registrarse"
+            type="submit"
+            [disabled]="submitting()"
+            (clicked)="submit()"
+          />
+        }
         <bv-folder-button
           label="Login"
           routerLink="/login"
@@ -148,7 +158,7 @@
       <bv-window-card
         title="slay.png"
         src="/assets/images/Registro.jpg"
-        alt="Registro Biblioteca"
+        alt="Registro ÁmbarLy"
       />
     </div>
   </div>

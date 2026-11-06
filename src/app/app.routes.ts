@@ -23,50 +23,58 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        title: 'Virtual Library · Inicio',
+        title: 'ÁmbarLy · Inicio',
         loadComponent: () => import('@features/home/home').then((m) => m.Home),
       },
       {
         path: 'login',
         canActivate: [guestGuard],
-        title: 'Iniciar sesión · Biblioteca Virtual',
+        title: 'Iniciar sesión · ÁmbarLy',
         loadComponent: () => import('@features/auth/login/login').then((m) => m.Login),
+      },
+      {
+        // Destino del botón "Verificar Sesión" del correo. Sin guard: tiene que
+        // funcionar aunque haya otra sesión abierta en el navegador.
+        path: 'verificar-sesion',
+        title: 'Verificar Sesión · ÁmbarLy',
+        loadComponent: () =>
+          import('@features/auth/verify-session/verify-session').then((m) => m.VerifySession),
       },
       {
         path: 'registro',
         canActivate: [guestGuard],
-        title: 'Crear cuenta · Biblioteca Virtual',
+        title: 'Crear cuenta · ÁmbarLy',
         loadComponent: () => import('@features/auth/register/register').then((m) => m.Register),
       },
       {
         path: 'libros',
         canActivate: [authGuard],
-        title: 'Catálogo · Biblioteca Virtual',
+        title: 'Catálogo · ÁmbarLy',
         loadComponent: () => import('@features/books/book-list/book-list').then((m) => m.BookList),
       },
       {
         path: 'libros/nuevo',
         canActivate: [authGuard],
-        title: 'Añadir libro · Biblioteca Virtual',
+        title: 'Añadir libro · ÁmbarLy',
         loadComponent: () => import('@features/books/book-form/book-form').then((m) => m.BookForm),
       },
       {
         path: 'libros/:bookId',
         canActivate: [authGuard],
-        title: 'Libro · Biblioteca Virtual',
+        title: 'Libro · ÁmbarLy',
         loadComponent: () =>
           import('@features/books/book-detail/book-detail').then((m) => m.BookDetail),
       },
       {
         path: 'libros/:bookId/editar',
         canActivate: [authGuard],
-        title: 'Editar libro · Biblioteca Virtual',
+        title: 'Editar libro · ÁmbarLy',
         loadComponent: () => import('@features/books/book-form/book-form').then((m) => m.BookForm),
       },
       {
         path: 'colecciones',
         canActivate: [authGuard],
-        title: 'Colecciones · Biblioteca Virtual',
+        title: 'Colecciones · ÁmbarLy',
         loadComponent: () =>
           import('@features/collections/collection-list/collection-list').then(
             (m) => m.CollectionList,
@@ -75,7 +83,7 @@ export const routes: Routes = [
       {
         path: 'colecciones/:collectionId',
         canActivate: [authGuard],
-        title: 'Colección · Biblioteca Virtual',
+        title: 'Colección · ÁmbarLy',
         loadComponent: () =>
           import('@features/collections/collection-detail/collection-detail').then(
             (m) => m.CollectionDetail,
@@ -84,14 +92,14 @@ export const routes: Routes = [
       {
         path: 'resenas',
         canActivate: [authGuard],
-        title: 'Reseñas · Biblioteca Virtual',
+        title: 'Reseñas · ÁmbarLy',
         loadComponent: () =>
           import('@features/reviews/review-list/review-list').then((m) => m.ReviewList),
       },
       {
         path: 'arbol',
         canActivate: [authGuard],
-        title: 'Árbol de lectura · Biblioteca Virtual',
+        title: 'Árbol de lectura · ÁmbarLy',
         loadComponent: () =>
           import('@features/reading-tree/reading-tree-page').then((m) => m.ReadingTreePage),
       },
@@ -101,7 +109,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    title: 'Página no encontrada · Biblioteca Virtual',
+    title: 'Página no encontrada · ÁmbarLy',
     loadComponent: () => import('@features/errors/not-found/not-found').then((m) => m.NotFound),
   },
 ];

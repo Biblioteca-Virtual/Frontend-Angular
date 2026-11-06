@@ -11,6 +11,31 @@ export interface ApiUser {
   email: string;
   /** RFC 1123, no ISO 8601. Ver `ApiDate`. */
   fecha_registro: ApiDate;
+  /** `false` hasta que toca "Verificar Sesión" en el correo. */
+  email_verificado: boolean;
+}
+
+/**
+ * Respuesta de `POST /api/auth/login` (202): la contraseña es correcta y se
+ * mandó el correo de "Verificar Sesión". El token llega al tocar ese botón.
+ */
+export interface PendingSession {
+  verificacion_pendiente: true;
+  /** Secreto para preguntar en `/api/auth/session-status` si ya se verificó. */
+  consulta: string;
+  email: string;
+  /** `false` si el backend no tiene el correo configurado o falló el envío. */
+  correo_enviado: boolean;
+  expira_en_minutos: number;
+}
+
+/** Respuesta de `POST /api/auth/session-status`. */
+export type SessionStatus = { estado: 'pendiente' } | ({ estado: 'verificada' } & LoginResult);
+
+/** Respuesta de `POST /api/auth/resend-session-email`. */
+export interface ResendResult {
+  correo_enviado: boolean;
+  expira_en_minutos: number;
 }
 
 /** Respuesta de `POST /api/auth/login`. */

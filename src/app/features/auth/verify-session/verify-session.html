@@ -1,0 +1,32 @@
+<div class="vl-page-layout">
+  <div class="vl-title-row">
+    <h1 class="vl-highlight-title">Verificar Sesión</h1>
+  </div>
+
+  <div class="vl-content-grid">
+    <div class="vl-form-col">
+      <div class="vl-panel auth-panel verify-panel">
+        <bv-brand chip />
+
+        @if (verifying()) {
+          <p class="verify-panel__lead">Estamos verificando tu sesión…</p>
+        } @else if (user(); as usuario) {
+          <h2 class="verify-panel__title">¡Sesión verificada!</h2>
+          <p class="verify-panel__lead">
+            Hola {{ usuario.nombre }}. Si iniciaste sesión en otra pestaña o en otro dispositivo, ya
+            podés seguir ahí. Te llevamos a tu biblioteca…
+          </p>
+          <a class="vl-btn vl-btn--primary" routerLink="/libros">Ir a mi biblioteca</a>
+        } @else if (error(); as apiError) {
+          <h2 class="verify-panel__title">No pudimos verificar tu sesión</h2>
+          <p class="verify-panel__lead">{{ apiError.details[0] ?? apiError.displayMessage }}</p>
+          <a class="vl-btn vl-btn--primary" routerLink="/login">Iniciar sesión de nuevo</a>
+        }
+      </div>
+    </div>
+
+    <div class="vl-image-col">
+      <bv-window-card title="ambarly.png" src="/assets/images/Login.jpg" alt="ÁmbarLy" />
+    </div>
+  </div>
+</div>

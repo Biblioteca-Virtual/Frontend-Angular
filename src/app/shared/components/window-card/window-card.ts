@@ -67,7 +67,7 @@ import { RouterLink } from '@angular/router';
       font-weight: 700;
       color: #1a1a1a;
       letter-spacing: -0.01em;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: var(--bv-font-sans);
     }
 
     .window-card__body {

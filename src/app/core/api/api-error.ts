@@ -79,6 +79,11 @@ export const NETWORK_ERROR_MESSAGE =
  * forma, `body` no sera un `ApiErrorBody` y no se debe propagar como tal.
  */
 export function toApiError(response: HttpErrorResponse): ApiError {
+  // El interceptor ya lo normalizo: volver a traducirlo perderia `details`.
+  if (response instanceof ApiError) {
+    return response;
+  }
+
   const url = response.url || null;
 
   if (response.status === 0) {

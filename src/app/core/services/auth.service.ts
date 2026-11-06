@@ -1,9 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { API_ENDPOINTS } from '@core/api/api.config';
 import { dataRequest } from '@core/api/api-operators';
-import { ApiEnvelope, ApiUser, LoginRequest, LoginResult, RegisterRequest } from '@core/models';
+import {
+  ApiEnvelope,
+  ApiUser,
+  LoginRequest,
+  LoginResult,
+  PendingSession,
+  RegisterRequest,
+  ResendResult,
+  SessionStatus,
+} from '@core/models';
 import { TokenStorageService } from '@core/services/token-storage.service';
 
 /**
@@ -31,26 +40,58 @@ export class AuthService {
     return user === null ? '' : `${user.nombre} ${user.apellido}`.trim();
   });
 
-  /**
-   * Crea una cuenta.
-   *
-   * OJO: el backend NO devuelve token en el registro, asi que tras un alta
-   * correcta hay que hacer login igualmente.
-   */
+  /** Crea una cuenta. No inicia sesion: despues hay que llamar a `login`. */
   register(payload: RegisterRequest): Observable<ApiUser> {
     return dataRequest(this.http.post<ApiEnvelope<ApiUser>>(API_ENDPOINTS.auth.register, payload));
   }
 
-  /** Inicia sesion y persiste el token junto al usuario. */
-  login(payload: LoginRequest): Observable<LoginResult> {
+  /**
+   * Valida la contraseña. El backend manda el correo de "Verificar Sesión" y
+   * todavia no devuelve token: la sesion llega con `checkSession` cuando se
+   * toca el boton del correo.
+   */
+  login(payload: LoginRequest): Observable<PendingSession> {
     return dataRequest(
-      this.http.post<ApiEnvelope<LoginResult>>(API_ENDPOINTS.auth.login, payload),
+      this.http.post<ApiEnvelope<PendingSession>>(API_ENDPOINTS.auth.login, payload),
+    );
+  }
+
+  /**
+   * Pregunta si ya se toco "Verificar Sesión". Devuelve `null` mientras siga
+   * pendiente; cuando se verifico, guarda la sesion y devuelve el resultado.
+   */
+  checkSession(consulta: string): Observable<LoginResult | null> {
+    return dataRequest(
+      this.http.post<ApiEnvelope<SessionStatus>>(API_ENDPOINTS.auth.sessionStatus, { consulta }),
     ).pipe(
+      map((status) => (status.estado === 'verificada' ? status : null)),
       tap((result) => {
-        this.storage.setSession(result.token, result.usuario);
-        this._currentUser.set(result.usuario);
+        if (result !== null) {
+          this.storeSession(result);
+        }
       }),
     );
+  }
+
+  /** Destino del boton del correo: verifica y deja logueada esta pestaña. */
+  verifySession(token: string): Observable<LoginResult> {
+    return dataRequest(
+      this.http.post<ApiEnvelope<LoginResult>>(API_ENDPOINTS.auth.verifySession, { token }),
+    ).pipe(tap((result) => this.storeSession(result)));
+  }
+
+  /** Manda otro correo de "Verificar Sesión" con un link nuevo. */
+  resendSessionEmail(consulta: string): Observable<ResendResult> {
+    return dataRequest(
+      this.http.post<ApiEnvelope<ResendResult>>(API_ENDPOINTS.auth.resendSessionEmail, {
+        consulta,
+      }),
+    );
+  }
+
+  private storeSession(result: LoginResult): void {
+    this.storage.setSession(result.token, result.usuario);
+    this._currentUser.set(result.usuario);
   }
 
   /** Refresca el usuario cacheado con `GET /api/auth/me`. */

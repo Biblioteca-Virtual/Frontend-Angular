@@ -4,19 +4,31 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiError } from '@core/api/api-error';
 import { AsyncState } from '@core/api/async-state';
-import { ApiReview, CreateReviewRequest, ReviewRating } from '@core/models';
+import { ApiReview, CreateReviewRequest } from '@core/models';
 import { AuthService } from '@core/services/auth.service';
 import { ReviewService } from '@core/services/review.service';
+import { ConfirmDialog } from '@shared/components/confirm-dialog/confirm-dialog';
 import { EmptyState } from '@shared/components/empty-state/empty-state';
 import { ErrorBanner } from '@shared/components/error-banner/error-banner';
 import { PageHeader } from '@shared/components/page-header/page-header';
 import { Spinner } from '@shared/components/spinner/spinner';
+import { StarRating } from '@shared/components/star-rating/star-rating';
 import { BvDatePipe } from '@shared/pipes/bv-date.pipe';
 
 @Component({
   selector: 'bv-review-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, PageHeader, Spinner, EmptyState, ErrorBanner, BvDatePipe],
+  imports: [
+    FormsModule,
+    RouterLink,
+    PageHeader,
+    Spinner,
+    StarRating,
+    ConfirmDialog,
+    EmptyState,
+    ErrorBanner,
+    BvDatePipe,
+  ],
   templateUrl: './review-list.html',
   styleUrl: './review-list.scss',
 })
@@ -29,11 +41,12 @@ export class ReviewList {
   protected readonly actionError = signal<ApiError | null>(null);
   protected readonly submitting = signal(false);
 
-  protected readonly ratings: readonly ReviewRating[] = [1, 2, 3, 4, 5];
+  protected readonly draftRating = signal(3);
+  protected readonly reviewToDelete = signal<ApiReview | null>(null);
+  protected readonly deleting = signal(false);
 
   protected readonly draft = {
     libro_id: '',
-    calificacion: 3 as ReviewRating,
     comentario: '',
   };
 
@@ -51,10 +64,6 @@ export class ReviewList {
 
   protected isMine(review: ApiReview): boolean {
     return this.mine().has(review.id);
-  }
-
-  protected stars(rating: number): string {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   }
 
   /**
@@ -79,7 +88,7 @@ export class ReviewList {
 
     const payload: CreateReviewRequest = {
       libro_id: libroId,
-      calificacion: this.draft.calificacion,
+      calificacion: this.draftRating(),
       comentario: this.draft.comentario.trim() || null,
     };
 
@@ -90,7 +99,7 @@ export class ReviewList {
         next: (created) => {
           this.state.setData([...(this.state.data() ?? []), created]);
           this.draft.libro_id = '';
-          this.draft.calificacion = 3;
+          this.draftRating.set(3);
           this.draft.comentario = '';
           this.submitting.set(false);
         },
@@ -102,15 +111,26 @@ export class ReviewList {
   }
 
   protected remove(review: ApiReview): void {
+    if (this.deleting()) {
+      return;
+    }
+    this.deleting.set(true);
     this.actionError.set(null);
 
     this.reviews
       .delete(review.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () =>
-          this.state.setData((this.state.data() ?? []).filter((item) => item.id !== review.id)),
-        error: (error: ApiError) => this.actionError.set(error),
+        next: () => {
+          this.state.setData((this.state.data() ?? []).filter((item) => item.id !== review.id));
+          this.reviewToDelete.set(null);
+          this.deleting.set(false);
+        },
+        error: (error: ApiError) => {
+          this.actionError.set(error);
+          this.reviewToDelete.set(null);
+          this.deleting.set(false);
+        },
       });
   }
 }
