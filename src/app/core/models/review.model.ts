@@ -1,9 +1,7 @@
 import { ApiDate } from './api.model';
 
-/** Calificacion valida. CHECK constraint `calificacion BETWEEN 1 AND 5`. */
-export type ReviewRating = 1 | 2 | 3 | 4 | 5;
-
-export const REVIEW_RATINGS: readonly ReviewRating[] = [1, 2, 3, 4, 5];
+/** Calificacion valida: de 0.5 a 5, de a 0.5 (admite medias estrellas). */
+export type ReviewRating = number;
 
 /**
  * Reseña tal y como lo serializa `Review.to_dict()`.

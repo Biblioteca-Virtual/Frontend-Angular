@@ -6,7 +6,7 @@
 Detalle completo en [`docs/EVALUACION.md`](docs/EVALUACION.md).
 <!-- calidad:fin -->
 
-# Frontend Angular — Biblioteca Virtual
+# Frontend Angular — ÁmbarLy
 
 Cliente web del backend Flask (`../Backend-Flask`). Catálogo de libros, préstamos,
 reseñas y ruleta.

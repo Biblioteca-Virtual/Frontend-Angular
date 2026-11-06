@@ -13,14 +13,24 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '@core/api/api-error';
 import { AsyncState } from '@core/api/async-state';
-import { ApiBook, ApiCollection, ApiReview, BOOK_LOCATIONS, BookLocation } from '@core/models';
+import {
+  ApiBook,
+  ApiCollection,
+  ApiReview,
+  BOOK_LOCATIONS,
+  BookLocation,
+  ReviewRating,
+} from '@core/models';
+import { AuthService } from '@core/services/auth.service';
 import { BookService } from '@core/services/book.service';
 import { CollectionService } from '@core/services/collection.service';
+import { ReviewService } from '@core/services/review.service';
 import { ConfirmDialog } from '@shared/components/confirm-dialog/confirm-dialog';
 import { EmptyState } from '@shared/components/empty-state/empty-state';
 import { ErrorBanner } from '@shared/components/error-banner/error-banner';
 import { ProgressBar } from '@shared/components/progress-bar/progress-bar';
 import { Spinner } from '@shared/components/spinner/spinner';
+import { StarRating } from '@shared/components/star-rating/star-rating';
 import { AutorNombrePipe } from '@shared/pipes/autor-nombre.pipe';
 import { BvDatePipe } from '@shared/pipes/bv-date.pipe';
 
@@ -35,6 +45,7 @@ import { BvDatePipe } from '@shared/pipes/bv-date.pipe';
     ErrorBanner,
     ConfirmDialog,
     ProgressBar,
+    StarRating,
     BvDatePipe,
     AutorNombrePipe,
   ],
@@ -44,6 +55,8 @@ import { BvDatePipe } from '@shared/pipes/bv-date.pipe';
 export class BookDetail {
   private readonly books = inject(BookService);
   private readonly collectionService = inject(CollectionService);
+  private readonly reviewService = inject(ReviewService);
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -70,7 +83,30 @@ export class BookDetail {
   protected readonly addingToCollection = signal(false);
   protected readonly addedTo = signal<ApiCollection | null>(null);
 
+  // Escribir una reseña
+  protected readonly isWritingReview = signal(false);
+  protected readonly reviewRating = signal<ReviewRating>(3);
+  protected readonly reviewComment = signal('');
+  protected readonly publishingReview = signal(false);
+  protected readonly reviewError = signal<ApiError | null>(null);
+
+  // Eliminar la reseña propia
+  protected readonly reviewToDelete = signal<ApiReview | null>(null);
+  protected readonly deletingReview = signal(false);
+
   protected readonly reviews = computed(() => this.bookReviews.data() ?? []);
+
+  /**
+   * Se compara también `libro_id` porque el listado incluye reseñas de libros
+   * con un título equivalente, y el límite de una reseña es por libro.
+   */
+  protected readonly hasOwnReview = computed(() => {
+    const userId = this.auth.user()?.id;
+    const bookId = this.numericId();
+    return this.reviews().some(
+      (review) => review.usuario_id === userId && review.libro_id === bookId,
+    );
+  });
 
   protected readonly averageRating = computed(() => {
     const reviews = this.reviews();
@@ -215,7 +251,70 @@ export class BookDetail {
       });
   }
 
-  protected stars(rating: number): string {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  protected isMine(review: ApiReview): boolean {
+    return review.usuario_id === this.auth.user()?.id;
+  }
+
+  protected deleteReview(review: ApiReview): void {
+    if (this.deletingReview()) {
+      return;
+    }
+    this.deletingReview.set(true);
+    this.reviewError.set(null);
+
+    this.reviewService
+      .delete(review.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.bookReviews.setData(this.reviews().filter((item) => item.id !== review.id));
+          this.reviewToDelete.set(null);
+          this.deletingReview.set(false);
+        },
+        error: (err: ApiError) => {
+          this.reviewError.set(err);
+          this.reviewToDelete.set(null);
+          this.deletingReview.set(false);
+        },
+      });
+  }
+
+  protected startWritingReview(): void {
+    this.reviewRating.set(3);
+    this.reviewComment.set('');
+    this.reviewError.set(null);
+    this.isWritingReview.set(true);
+  }
+
+  protected cancelWritingReview(): void {
+    this.isWritingReview.set(false);
+  }
+
+  protected publishReview(bookId: number): void {
+    if (this.publishingReview()) {
+      return;
+    }
+    this.publishingReview.set(true);
+    this.reviewError.set(null);
+
+    this.reviewService
+      .create({
+        libro_id: bookId,
+        calificacion: this.reviewRating(),
+        comentario: this.reviewComment().trim() || null,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (created) => {
+          // El listado viene ordenado de la más reciente a la más antigua.
+          this.bookReviews.setData([created, ...this.reviews()]);
+          this.isWritingReview.set(false);
+          this.publishingReview.set(false);
+        },
+        error: (err: ApiError) => {
+          this.reviewError.set(err);
+          this.publishingReview.set(false);
+        },
+      });
   }
 }

@@ -19,12 +19,8 @@
     </div>
 
     <div class="bv-field">
-      <label for="calificacion">Calificación *</label>
-      <select id="calificacion" name="calificacion" [(ngModel)]="draft.calificacion">
-        @for (rating of ratings; track rating) {
-          <option [ngValue]="rating">{{ rating }} / 5</option>
-        }
-      </select>
+      <label>Calificación *</label>
+      <bv-star-rating [(value)]="draftRating" />
     </div>
 
     <div class="bv-field">
@@ -53,9 +49,7 @@
           <a class="item__book" [routerLink]="['/libros', review.libro_id]">
             {{ review.libro_titulo }}
           </a>
-          <span class="stars" [attr.aria-label]="'Calificación: ' + review.calificacion">
-            {{ stars(review.calificacion) }}
-          </span>
+          <bv-star-rating [value]="review.calificacion" readonly />
         </div>
 
         <p class="item__author">
@@ -69,7 +63,11 @@
         @if (isMine(review)) {
           <div class="bv-row item__actions">
             <span class="bv-badge bv-badge--neutral">Tu reseña</span>
-            <button type="button" class="bv-btn bv-btn--danger bv-btn--sm" (click)="remove(review)">
+            <button
+              type="button"
+              class="bv-btn bv-btn--danger bv-btn--sm"
+              (click)="reviewToDelete.set(review)"
+            >
               Eliminar
             </button>
           </div>
@@ -77,4 +75,14 @@
       </li>
     }
   </ul>
+
+  <bv-confirm-dialog
+    [open]="reviewToDelete() !== null"
+    title="¿Eliminar tu reseña?"
+    message="Se borra tu calificación y tu comentario. No se puede deshacer."
+    confirmLabel="Eliminar reseña"
+    [busy]="deleting()"
+    (confirmed)="remove(reviewToDelete()!)"
+    (cancelled)="reviewToDelete.set(null)"
+  />
 }

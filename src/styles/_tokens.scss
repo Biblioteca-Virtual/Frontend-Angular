@@ -1,4 +1,4 @@
-// Tokens de diseño de la Biblioteca Virtual.
+// Tokens de diseño de ÁmbarLy.
 //
 // Se exponen como CSS custom properties (y no como variables SCSS) para que:
 //  1. Cualquier hoja de estilos pueda usarlos, incluidos los estilos de componentes.
@@ -10,6 +10,8 @@
 :root {
   // --- Virtual Library Figma Tokens ---------------------------------------
   --vl-highlight: #ffe847;
+  // Color de marca de ÁmbarLy (el "Ly" y el botón del correo).
+  --vl-amber: #f9911b;
   --vl-panel-bg: #f8f5f0;
   // Dorado de subtítulos sobre crema. Más oscuro que el #e5ac31 de Canva para
   // llegar al contraste mínimo de texto grande (3:1).

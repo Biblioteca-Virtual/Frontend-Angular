@@ -1,0 +1,19 @@
+.verify-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+
+  &__title {
+    margin: 0;
+    font-size: 1.45rem;
+    color: #0e1b10;
+  }
+
+  &__lead {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #3a2a0c;
+  }
+}

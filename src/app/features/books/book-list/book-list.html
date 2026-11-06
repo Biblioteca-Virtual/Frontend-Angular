@@ -177,7 +177,7 @@
               <div class="books-grid">
                 @for (book of filteredBooks(); track trackBook($index, book)) {
                   <a [routerLink]="['/libros', book.id]" class="book-grid-card">
-                    <div class="book-cover-frame">
+                    <div class="book-cover-frame" [class.vl-crystal]="book.porcentaje_lectura >= 100">
                       @if (getCoverUrl(book.imagen_portada); as coverUrl) {
                         <img [src]="coverUrl" [alt]="book.titulo" class="book-cover-thumbnail" />
                       } @else {

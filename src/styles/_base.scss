@@ -33,7 +33,9 @@ h2,
 h3,
 h4 {
   margin: 0;
-  font-weight: 650;
+  // Todos los titulares usan la serif de los títulos grandes ("Registrarse").
+  font-family: var(--vl-font-serif);
+  font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.015em;
 }
@@ -503,3 +505,65 @@ a {
   }
 }
 
+
+// --- Libro terminado: portada cristalizada ---------------------------------
+// Se aplica al marco de la portada cuando el libro llega al 100%. Encima de la
+// imagen van un velo celeste con facetas de cristal y un brillo que la cruza.
+.vl-crystal {
+  position: relative;
+  isolation: isolate;
+  outline: 2px solid rgb(214 240 255 / 90%);
+  outline-offset: -2px;
+  box-shadow:
+    0 0 0 1px rgb(120 190 235 / 55%),
+    0 0 16px rgb(140 210 255 / 75%),
+    0 6px 16px rgb(0 0 0 / 18%) !important;
+
+  img,
+  svg {
+    filter: saturate(0.75) brightness(1.06) hue-rotate(-8deg);
+  }
+
+  // Velo helado con facetas.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 45%) 0 18%, transparent 18% 42%, rgb(255 255 255 / 22%) 42% 52%, transparent 52%),
+      linear-gradient(225deg, transparent 0 60%, rgb(255 255 255 / 30%) 60% 70%, transparent 70%),
+      linear-gradient(160deg, rgb(190 230 255 / 38%), rgb(120 185 235 / 28%) 55%, rgb(225 245 255 / 40%));
+    mix-blend-mode: screen;
+  }
+
+  // Destello que recorre el cristal.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -20% -60%;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 75%) 50%, transparent 60%);
+    transform: translateX(-70%);
+    animation: vl-crystal-shine 4.5s ease-in-out infinite;
+  }
+}
+
+@keyframes vl-crystal-shine {
+  0%,
+  55% {
+    transform: translateX(-70%);
+  }
+  100% {
+    transform: translateX(70%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vl-crystal::after {
+    animation: none;
+    opacity: 0;
+  }
+}

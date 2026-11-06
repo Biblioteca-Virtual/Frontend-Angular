@@ -14,11 +14,13 @@ import { AuthService } from '@core/services/auth.service';
 import { ErrorBanner } from '@shared/components/error-banner/error-banner';
 import { FolderButton } from '@shared/components/folder-button/folder-button';
 import { WindowCard } from '@shared/components/window-card/window-card';
+import { PendingSession } from '@core/models';
+import { SessionPending } from '../session-pending/session-pending';
 
 @Component({
   selector: 'bv-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, ErrorBanner, FolderButton, WindowCard],
+  imports: [ReactiveFormsModule, RouterLink, ErrorBanner, FolderButton, WindowCard, SessionPending],
   templateUrl: './login.html',
   styleUrl: '../auth-form.scss',
 })
@@ -31,6 +33,8 @@ export class Login {
 
   protected readonly submitting = signal(false);
   protected readonly error = signal<ApiError | null>(null);
+  /** Contraseña correcta: se espera que toque "Verificar Sesión" en el correo. */
+  protected readonly pending = signal<PendingSession | null>(null);
 
   /**
    * `returnUrl` lo inyecta `authGuard` con la ruta que el usuario intentaba
@@ -56,6 +60,9 @@ export class Login {
   });
 
   protected submit(): void {
+    if (this.pending() !== null) {
+      return;
+    }
     if (this.form.invalid || this.submitting()) {
       this.form.markAllAsTouched();
       return;
@@ -68,12 +75,25 @@ export class Login {
       .login(this.form.getRawValue())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => void this.router.navigateByUrl(this.returnUrl),
+        next: (pending) => {
+          this.pending.set(pending);
+          this.submitting.set(false);
+        },
         error: (error: ApiError) => {
           this.error.set(error);
           this.submitting.set(false);
         },
       });
+  }
+
+  /** Se tocó "Verificar Sesión": la sesión ya está guardada. */
+  protected onVerified(): void {
+    void this.router.navigateByUrl(this.returnUrl);
+  }
+
+  protected cancelPending(): void {
+    this.pending.set(null);
+    this.form.controls.password.reset();
   }
 
   private safeReturnUrl(value: string | null): string {
