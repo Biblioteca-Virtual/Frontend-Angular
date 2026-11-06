@@ -11,37 +11,38 @@ import {
   UpdateReviewRequest,
 } from '@core/models';
 
+/**
+ * Reseñas del catálogo.
+ *
+ * - `list` trae TODAS las reseñas, no solo las del usuario actual: el backend no
+ *   filtra las lecturas. Ordena por `resenas.id ASC`, sin filtros ni paginación.
+ * - `forBook` trae las reseñas del libro y de los libros de otros usuarios con un
+ *   título equivalente (sin importar tildes, mayúsculas ni pequeños errores).
+ * - `create`: solo puede haber una reseña por usuario y libro (índice UNIQUE en
+ *   `resenas`). Repetirla devuelve 409, y un `libro_id` inexistente, 404.
+ * - `update` sobre una reseña ajena responde 404, no 403. Enviar
+ *   `comentario: null` de forma explícita BORRA el comentario.
+ */
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
   private readonly http = inject(HttpClient);
 
-  /**
-   * Lista TODAS las reseñas del catalogo, no solo las del usuario actual: el
-   * backend no filtra las lecturas. Ordena por `resenas.id ASC` y no admite
-   * filtros ni paginacion.
-   */
   list(): Observable<ApiReview[]> {
     return dataRequest(this.http.get<ApiEnvelope<ApiReview[]>>(API_ENDPOINTS.reviews));
+  }
+
+  forBook(bookId: number): Observable<ApiReview[]> {
+    return dataRequest(this.http.get<ApiEnvelope<ApiReview[]>>(API_ENDPOINTS.bookReviews(bookId)));
   }
 
   getById(id: number): Observable<ApiReview> {
     return dataRequest(this.http.get<ApiEnvelope<ApiReview>>(API_ENDPOINTS.review(id)));
   }
 
-  /**
-   * Crea una reseña.
-   *
-   * Solo puede haber una reseña por usuario y libro (indice UNIQUE en
-   * `resenas`). Repetirla devuelve 409, y un `libro_id` inexistente, 404.
-   */
   create(payload: CreateReviewRequest): Observable<ApiReview> {
     return dataRequest(this.http.post<ApiEnvelope<ApiReview>>(API_ENDPOINTS.reviews, payload));
   }
 
-  /**
-   * Actualiza una reseña propia. Otra reseña responde 404, no 403.
-   * Enviar `comentario: null` de forma explicita BORRA el comentario.
-   */
   update(id: number, payload: UpdateReviewRequest): Observable<ApiReview> {
     return dataRequest(this.http.put<ApiEnvelope<ApiReview>>(API_ENDPOINTS.review(id), payload));
   }

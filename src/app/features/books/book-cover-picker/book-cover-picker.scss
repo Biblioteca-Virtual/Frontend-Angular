@@ -1,0 +1,68 @@
+// El campo sigue siendo hijo directo del formulario.
+:host {
+  display: contents;
+}
+
+.cover-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.cover-thumb-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  img {
+    width: 75px;
+    height: 105px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-remove-thumb {
+    padding: 0.35rem 0.75rem;
+    background: #ff4d4f;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #cf1322;
+    }
+  }
+}
+
+.btn-file-picker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  background-color: var(--vl-input-gold);
+  border: 1px dashed #b88628;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #2b220d;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--vl-input-gold-hover);
+    border-color: #8c6218;
+  }
+}
+
+.upload-error {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}

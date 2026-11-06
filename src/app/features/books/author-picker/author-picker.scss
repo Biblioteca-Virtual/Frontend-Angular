@@ -1,0 +1,40 @@
+// El campo sigue siendo hijo directo del formulario.
+:host {
+  display: contents;
+}
+
+.author-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.4rem 0.25rem 0.75rem;
+    background: #ebd296;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: #2b220d;
+  }
+
+  button {
+    width: 1.4rem;
+    height: 1.4rem;
+    border: none;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 10%);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      background: #f0bebe;
+      color: #8c1d1d;
+    }
+  }
+}

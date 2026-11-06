@@ -35,8 +35,8 @@
           </div>
         </div>
 
-        <bv-error-banner [error]="error()" />
-        @if (pending(); as session) {
+        <bv-error-banner [error]="flow.error()" />
+        @if (flow.session(); as session) {
           <bv-session-pending
             [pending]="session"
             (verified)="onVerified()"
@@ -61,9 +61,9 @@
                 required
               />
             </div>
-            @if (email().touched && email().hasError('required')) {
+            @if (form.controls.email.touched && form.controls.email.hasError('required')) {
               <small class="auth__hint-error">El correo es obligatorio.</small>
-            } @else if (email().touched && email().hasError('email')) {
+            } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
               <small class="auth__hint-error">El correo no tiene un formato válido.</small>
             }
           </div>
@@ -84,7 +84,7 @@
                 required
               />
             </div>
-            @if (password().touched && password().hasError('required')) {
+            @if (form.controls.password.touched && form.controls.password.hasError('required')) {
               <small class="auth__hint-error">La contraseña es obligatoria.</small>
             }
           </div>
@@ -94,11 +94,11 @@
 
       <!-- Blue Folder Action Buttons underneath card -->
       <div class="vl-folder-actions">
-        @if (pending() === null) {
+        @if (flow.session() === null) {
           <bv-folder-button
             label="Login"
             type="submit"
-            [disabled]="submitting()"
+            [disabled]="flow.submitting()"
             (clicked)="submit()"
           />
         }

@@ -33,7 +33,7 @@
           <defs>
             <!-- Las luces y sombras se difuminan y se recortan a la forma de la copa -->
             <clipPath id="tree-crown-clip">
-              @for (c of crown; track $index) {
+              @for (c of tree.crown; track $index) {
                 <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
               }
             </clipPath>
@@ -44,23 +44,23 @@
 
           <!-- Copa: primero el contorno, después el relleno, sombras y luces -->
           <g class="tree__crown-outline">
-            @for (c of crown; track $index) {
+            @for (c of tree.crown; track $index) {
               <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
             }
           </g>
           <g class="tree__crown">
-            @for (c of crown; track $index) {
+            @for (c of tree.crown; track $index) {
               <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
             }
           </g>
           <g clip-path="url(#tree-crown-clip)">
             <g class="tree__shade" filter="url(#tree-soft)">
-              @for (c of shade; track $index) {
+              @for (c of tree.shade; track $index) {
                 <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
               }
             </g>
             <g class="tree__light" filter="url(#tree-soft)">
-              @for (c of light; track $index) {
+              @for (c of tree.light; track $index) {
                 <circle [attr.cx]="c[0]" [attr.cy]="c[1]" [attr.r]="c[2]" />
               }
             </g>
@@ -118,7 +118,7 @@
         <p class="result-panel__kicker">¡Tu próxima lectura!</p>
         <div class="result-panel__book">
           <div class="result-panel__cover">
-            @if (getCoverUrl(book.imagen_portada); as url) {
+            @if (coverUrl(book.imagen_portada); as url) {
               <img [src]="url" [alt]="'Portada de ' + book.titulo" />
             } @else {
               <span aria-hidden="true">📖</span>

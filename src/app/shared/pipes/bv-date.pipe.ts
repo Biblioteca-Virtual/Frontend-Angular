@@ -29,7 +29,8 @@ const FORMATTERS: Record<BvDateFormat, Intl.DateTimeFormatOptions> = {
  * ("Fri, 25 Sep 2026 12:00:00 GMT") y NO en ISO 8601. El `DatePipe` de Angular
  * solo entiende ISO 8601, de modo que `{{ fecha | date }}` se renderiza vacio.
  *
- * Este pipe parsea RFC 1123 (y tambien ISO, por si el backend lo corrige) y
+ * Este pipe parsea RFC 1123 (y tambien ISO, por si el backend lo corrige) con
+ * `Date.parse`, que lo entiende de forma nativa en los navegadores actuales, y
  * formatea con `Intl.DateTimeFormat` en espanol.
  *
  * OJO: las columnas son TIMESTAMP WITHOUT TIME ZONE, es decir horas locales sin
@@ -56,7 +57,6 @@ export class BvDatePipe implements PipeTransform {
       return Number.isNaN(value.getTime()) ? null : value;
     }
 
-    // `Date.parse` entiende RFC 1123 de forma nativa en los navegadores actuales.
     const timestamp = Date.parse(value);
     return Number.isNaN(timestamp) ? null : new Date(timestamp);
   }

@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { exhaustMap, filter, take, timer } from 'rxjs';
 import { ApiError } from '@core/api/api-error';
 import { LoginResult, PendingSession } from '@core/models';
-import { AuthService } from '@core/services/auth.service';
+import { SessionVerificationService } from '@core/services/session-verification.service';
 
 /** Cada cuánto se pregunta si ya se tocó "Verificar Sesión". */
 const POLL_INTERVAL_MS = 3000;
@@ -21,7 +21,10 @@ const POLL_INTERVAL_MS = 3000;
  * "Revisá tu correo": se muestra después de un login con la contraseña
  * correcta, mientras se espera que el usuario toque "Verificar Sesión" en el
  * correo. Pregunta al backend cada pocos segundos y, cuando se verificó, la
- * sesión ya queda guardada y emite `verified`.
+ * sesión ya queda guardada y emite `verified`: el padre decide a dónde navegar.
+ *
+ * `cancel` vuelve al formulario (canceló o la verificación venció). La consulta
+ * usa `exhaustMap` para que no se apilen pedidos si el backend tarda.
  */
 @Component({
   selector: 'bv-session-pending',
@@ -160,14 +163,12 @@ const POLL_INTERVAL_MS = 3000;
   `,
 })
 export class SessionPending implements OnInit {
-  private readonly auth = inject(AuthService);
+  private readonly verification = inject(SessionVerificationService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly pending = input.required<PendingSession>();
 
-  /** La sesión ya quedó guardada: el padre decide a dónde navegar. */
   readonly verified = output<LoginResult>();
-  /** Volver al formulario (canceló o la verificación venció). */
   readonly cancel = output<void>();
 
   protected readonly error = signal<ApiError | null>(null);
@@ -180,10 +181,9 @@ export class SessionPending implements OnInit {
     this.sent.set(this.pending().correo_enviado);
     this.minutes.set(this.pending().expira_en_minutos);
 
-    // exhaustMap: si el backend tarda, no se apilan consultas.
     timer(POLL_INTERVAL_MS, POLL_INTERVAL_MS)
       .pipe(
-        exhaustMap(() => this.auth.checkSession(this.pending().consulta)),
+        exhaustMap(() => this.verification.checkSession(this.pending().consulta)),
         filter((result): result is LoginResult => result !== null),
         take(1),
         takeUntilDestroyed(this.destroyRef),
@@ -201,7 +201,7 @@ export class SessionPending implements OnInit {
     this.resending.set(true);
     this.resent.set(false);
 
-    this.auth
+    this.verification
       .resendSessionEmail(this.pending().consulta)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

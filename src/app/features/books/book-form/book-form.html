@@ -15,6 +15,7 @@
         </a>
 
         <bv-error-banner [error]="error()" />
+        <bv-error-banner [error]="categories.error()" />
 
         @if (loading()) {
           <bv-spinner label="Cargando libro…" />
@@ -34,56 +35,7 @@
               </div>
             </div>
 
-            <!-- Autores: se eligen de la lista o se agregan nuevos -->
-            <div class="vl-field">
-              <label for="autor">Autor/es:</label>
-              @if (selectedAuthors().length > 0) {
-                <ul class="author-chips">
-                  @for (author of selectedAuthors(); track author.id) {
-                    <li>
-                      <span>{{ author | autorNombre }}</span>
-                      <button
-                        type="button"
-                        [attr.aria-label]="'Quitar a ' + (author | autorNombre)"
-                        (click)="removeAuthor(author.id)"
-                      >
-                        ×
-                      </button>
-                    </li>
-                  }
-                </ul>
-              }
-              <div class="inline-add inline-add--tight">
-                <div class="vl-field">
-                  <div class="vl-input-wrap">
-                    <input
-                      id="autor"
-                      name="autor"
-                      type="text"
-                      list="bv-authors"
-                      maxlength="200"
-                      autocomplete="off"
-                      [(ngModel)]="authorInput"
-                      placeholder="Ej: Gabriel García Márquez"
-                      (keydown.enter)="$event.preventDefault(); addAuthor()"
-                    />
-                    <datalist id="bv-authors">
-                      @for (author of authors(); track author.id) {
-                        <option [value]="author | autorNombre"></option>
-                      }
-                    </datalist>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  class="vl-btn"
-                  [disabled]="savingAuthor() || !authorInput.trim()"
-                  (click)="addAuthor()"
-                >
-                  {{ savingAuthor() ? 'Agregando…' : '+ Agregar autor' }}
-                </button>
-              </div>
-            </div>
+            <bv-author-picker [(selected)]="selectedAuthors" (failed)="error.set($event)" />
 
             <!-- Categoría (con alta de categorías nuevas) y ubicación -->
             <div class="form-row-2">
@@ -93,18 +45,18 @@
                   <select
                     id="categoria"
                     name="categoria"
-                    [ngModel]="form.categoria_id"
-                    (ngModelChange)="onCategoryChange($event)"
+                    [ngModel]="categories.selected()"
+                    (ngModelChange)="categories.change($event)"
                     class="vl-select"
                     required
                   >
-                    @for (cat of categories(); track cat.id) {
+                    @for (cat of categories.all(); track cat.id) {
                       <option [value]="cat.id.toString()">{{ cat.nombre }}</option>
                     }
-                    @if (categories().length === 0) {
+                    @if (categories.all().length === 0) {
                       <option value="1">General</option>
                     }
-                    <option [value]="NEW_CATEGORY">+ Agregar categoría…</option>
+                    <option [value]="categories.newOption">+ Agregar categoría…</option>
                   </select>
                 </div>
               </div>
@@ -127,7 +79,7 @@
               </div>
             </div>
 
-            @if (addingCategory()) {
+            @if (categories.adding()) {
               <div class="inline-add">
                 <div class="vl-field">
                   <label for="nuevaCategoria">Nueva categoría:</label>
@@ -137,21 +89,22 @@
                       name="nuevaCategoria"
                       type="text"
                       maxlength="100"
-                      [(ngModel)]="newCategory"
+                      [ngModel]="categories.newName()"
+                      (ngModelChange)="categories.newName.set($event)"
                       placeholder="Ej: Poesía"
-                      (keydown.enter)="$event.preventDefault(); addCategory()"
+                      (keydown.enter)="$event.preventDefault(); categories.add()"
                     />
                   </div>
                 </div>
                 <button
                   type="button"
                   class="vl-btn vl-btn--primary"
-                  [disabled]="savingCategory() || !newCategory.trim()"
-                  (click)="addCategory()"
+                  [disabled]="categories.saving() || !categories.newName().trim()"
+                  (click)="categories.add()"
                 >
-                  {{ savingCategory() ? 'Agregando…' : 'Agregar' }}
+                  {{ categories.saving() ? 'Agregando…' : 'Agregar' }}
                 </button>
-                <button type="button" class="vl-btn vl-btn--ghost" (click)="cancelCategory()">
+                <button type="button" class="vl-btn vl-btn--ghost" (click)="categories.cancel()">
                   Cancelar
                 </button>
               </div>
@@ -208,41 +161,14 @@
             <!-- Previsualización del porcentaje -->
             <div class="reading-progress-preview">
               <div class="reading-progress-preview__bar">
-                <div class="reading-progress-preview__fill" [style.width.%]="readingPercentage"></div>
+                <div class="reading-progress-preview__fill" [style.width.%]="percentage"></div>
               </div>
               <span class="reading-progress-preview__label">
-                Progreso calculado: <strong>% {{ readingPercentage }}</strong>
+                Progreso calculado: <strong>% {{ percentage }}</strong>
               </span>
             </div>
 
-            <!-- Portada del libro (Storage) -->
-            <div class="vl-field">
-              <label>Portada del libro:</label>
-              <div class="cover-upload-section">
-                @if (form.imagen_portada) {
-                  <div class="cover-thumb-preview">
-                    <img [src]="getCoverUrl(form.imagen_portada)" alt="Portada del libro" />
-                    <button type="button" class="btn-remove-thumb" (click)="removeCover()" title="Quitar portada">
-                      ✕ Quitar
-                    </button>
-                  </div>
-                }
-                <div class="cover-upload-action">
-                  <label class="btn-file-picker">
-                    <input
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
-                      (change)="onFileSelected($event)"
-                      style="display: none;"
-                    />
-                    <span>{{ uploadingCover() ? 'Subiendo imagen…' : (form.imagen_portada ? 'Cambiar imagen de portada' : 'Subir imagen de portada') }}</span>
-                  </label>
-                  @if (uploadError()) {
-                    <p class="upload-error">{{ uploadError() }}</p>
-                  }
-                </div>
-              </div>
-            </div>
+            <bv-book-cover-picker [(path)]="cover" [(uploading)]="uploadingCover" />
 
             <div class="vl-field">
               <label for="descripcion">Notas / Descripción:</label>

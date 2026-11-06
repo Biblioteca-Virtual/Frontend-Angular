@@ -1,0 +1,63 @@
+<!-- Total de páginas -->
+<div class="info-row">
+  <span class="info-label">Total de páginas:</span>
+  @if (editing()) {
+    <input
+      type="number"
+      min="0"
+      [ngModel]="totalPages()"
+      (ngModelChange)="totalPages.set($event)"
+      class="inline-pages-input"
+    />
+  } @else {
+    <span class="info-value info-value--gold"> ({{ book().paginas_totales || 0 }} páginas) </span>
+  }
+</div>
+
+<!-- Páginas leídas -->
+<div class="info-row">
+  <span class="info-label">Páginas Leídas:</span>
+  @if (editing()) {
+    <input
+      type="number"
+      min="0"
+      [ngModel]="readPages()"
+      (ngModelChange)="readPages.set($event)"
+      class="inline-pages-input"
+    />
+  } @else {
+    <span class="info-value info-value--gold"> ({{ book().paginas_leidas || 0 }} páginas) </span>
+  }
+</div>
+
+<!-- Porcentaje sacado dinámicamente -->
+<div class="info-row info-row--progress">
+  <span class="info-label">Progreso:</span>
+  <div class="progress-block">
+    <bv-progress-bar [value]="percentage()" />
+    <span class="info-value info-value--percentage">{{ percentage() }}%</span>
+  </div>
+</div>
+
+<!-- Botones de cambiar páginas / guardar páginas -->
+<div class="progress-actions">
+  @if (!editing()) {
+    <button type="button" class="btn-progress-toggle" (click)="startEditing()">
+      ✏️ Cambiar páginas leídas / totales
+    </button>
+  } @else {
+    <div class="progress-edit-btns">
+      <button type="button" class="vl-btn vl-btn--primary" [disabled]="saving()" (click)="save()">
+        {{ saving() ? 'Guardando…' : 'Guardar páginas' }}
+      </button>
+      <button
+        type="button"
+        class="vl-btn vl-btn--ghost"
+        [disabled]="saving()"
+        (click)="editing.set(false)"
+      >
+        Cancelar
+      </button>
+    </div>
+  }
+</div>

@@ -20,6 +20,11 @@ import {
  *       (confirmed)="remove()"
  *       (cancelled)="confirming.set(false)"
  *     />
+ *
+ * `busy` deshabilita el botón mientras corre la petición. Al cancelar con Escape
+ * decide el padre, para que `open` siga siendo la fuente de verdad. Un clic fuera
+ * de la caja también cancela; como el padding del `<dialog>` es el propio
+ * elemento, solo cuenta un clic fuera de su rectángulo.
  */
 @Component({
   selector: 'bv-confirm-dialog',
@@ -84,7 +89,6 @@ export class ConfirmDialog {
   readonly title = input.required<string>();
   readonly message = input<string | null>(null);
   readonly confirmLabel = input('Eliminar');
-  /** Deshabilita el botón mientras corre la petición. */
   readonly busy = input(false);
 
   readonly confirmed = output<void>();
@@ -103,7 +107,6 @@ export class ConfirmDialog {
     });
   }
 
-  /** Escape: el padre decide cerrar, para que `open` siga siendo la fuente de verdad. */
   protected onCancel(event: Event): void {
     event.preventDefault();
     if (!this.busy()) {
@@ -111,14 +114,11 @@ export class ConfirmDialog {
     }
   }
 
-  /** Un clic fuera de la caja (sobre el backdrop) también cancela. */
   protected onBackdrop(event: MouseEvent): void {
     const element = this.dialog().nativeElement;
     if (event.target !== element || this.busy()) {
       return;
     }
-    // El padding del <dialog> también es el propio elemento: solo cuenta un
-    // clic fuera de su rectángulo.
     const box = element.getBoundingClientRect();
     const outside =
       event.clientX < box.left ||

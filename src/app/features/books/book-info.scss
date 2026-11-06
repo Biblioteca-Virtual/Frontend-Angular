@@ -1,0 +1,32 @@
+// Filas de datos del libro, compartidas por la ficha y sus partes.
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #000;
+  min-width: 155px;
+}
+
+.info-value {
+  color: #222;
+
+  &--title {
+    font-weight: 500;
+  }
+
+  &--gold {
+    color: var(--vl-gold-text);
+    font-weight: 500;
+  }
+
+  &--percentage {
+    font-weight: 700;
+    color: #0b4f9c;
+  }
+}

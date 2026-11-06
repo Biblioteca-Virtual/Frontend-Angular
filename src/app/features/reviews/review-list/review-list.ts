@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiError } from '@core/api/api-error';
-import { AsyncState } from '@core/api/async-state';
+import { AsyncState } from '@core/state/async-state';
 import { ApiReview, CreateReviewRequest } from '@core/models';
 import { AuthService } from '@core/services/auth.service';
 import { ReviewService } from '@core/services/review.service';
@@ -15,6 +15,14 @@ import { Spinner } from '@shared/components/spinner/spinner';
 import { StarRating } from '@shared/components/star-rating/star-rating';
 import { BvDatePipe } from '@shared/pipes/bv-date.pipe';
 
+/**
+ * Reseñas del catálogo; `mine` marca las del usuario actual para gestionarlas de
+ * forma distinta.
+ *
+ * El backend impone una reseña por usuario y libro (`UNIQUE (libro_id,
+ * usuario_id)`), así que repetirla devuelve 409. Y solo se puede modificar o
+ * borrar la propia: sobre la de otro usuario responde 404.
+ */
 @Component({
   selector: 'bv-review-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +58,6 @@ export class ReviewList {
     comentario: '',
   };
 
-  /** Marca las reseñas del usuario actual, para gestionarlas de forma distinta. */
   protected readonly mine = computed(() => {
     const userId = this.auth.user()?.id;
     return new Set(
@@ -66,13 +73,6 @@ export class ReviewList {
     return this.mine().has(review.id);
   }
 
-  /**
-   * Crea una reseña.
-   *
-   * El backend impone una reseña por usuario y libro (`UNIQUE (libro_id,
-   * usuario_id)`), asi que repetirla devuelve 409. Y solo se puede modificar o
-   * borrar la propia: sobre la de otro usuario responde 404.
-   */
   protected submit(): void {
     if (this.submitting()) {
       return;

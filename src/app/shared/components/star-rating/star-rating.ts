@@ -11,6 +11,27 @@ import {
 const MIN_RATING = 0.5;
 const MAX_RATING = 5;
 const STEP = 0.5;
+const STAR_PATH =
+  'M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z';
+
+/** Valor que elige una tecla, o `null` si la tecla no cambia la calificación. */
+function ratingForKey(key: string, current: number): number | null {
+  const next: Record<string, number> = {
+    ArrowRight: current + STEP,
+    ArrowUp: current + STEP,
+    ArrowLeft: current - STEP,
+    ArrowDown: current - STEP,
+    Home: MIN_RATING,
+    End: MAX_RATING,
+  };
+  return key in next ? Math.min(MAX_RATING, Math.max(MIN_RATING, next[key])) : null;
+}
+
+/** La mitad izquierda de la estrella vale media estrella menos que la derecha. */
+function ratingAt(event: MouseEvent, star: number): number {
+  const { left, width } = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  return event.clientX - left < width / 2 ? star - STEP : star;
+}
 
 /**
  * Calificación con estrellas, admite medias estrellas.
@@ -19,7 +40,8 @@ const STEP = 0.5;
  * estrella se previsualiza media y por la derecha la estrella entera, y el clic
  * la confirma. También funciona con un toque y con las flechas del teclado.
  *
- * Con `readonly` solo muestra el valor.
+ * Con `readonly` solo muestra el valor. `preview` es el valor bajo el mouse,
+ * todavía sin confirmar.
  */
 @Component({
   selector: 'bv-star-rating',
@@ -63,10 +85,8 @@ export class StarRating {
   protected readonly minRating = MIN_RATING;
   protected readonly maxRating = MAX_RATING;
   protected readonly starNumbers = [1, 2, 3, 4, 5];
-  protected readonly starPath =
-    'M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z';
+  protected readonly starPath = STAR_PATH;
 
-  /** Valor bajo el mouse, todavía sin confirmar. */
   protected readonly preview = signal<number | null>(null);
   protected readonly shown = computed(() => this.preview() ?? this.value());
 
@@ -76,36 +96,21 @@ export class StarRating {
 
   protected onHover(event: MouseEvent, star: number): void {
     if (!this.readonly()) {
-      this.preview.set(this.ratingAt(event, star));
+      this.preview.set(ratingAt(event, star));
     }
   }
 
   protected onSelect(event: MouseEvent, star: number): void {
     if (!this.readonly()) {
-      this.value.set(this.ratingAt(event, star));
+      this.value.set(ratingAt(event, star));
     }
   }
 
   protected onKeydown(event: KeyboardEvent): void {
-    if (this.readonly()) {
-      return;
-    }
-    const next: Record<string, number> = {
-      ArrowRight: this.value() + STEP,
-      ArrowUp: this.value() + STEP,
-      ArrowLeft: this.value() - STEP,
-      ArrowDown: this.value() - STEP,
-      Home: MIN_RATING,
-      End: MAX_RATING,
-    };
-    if (event.key in next) {
+    const rating = this.readonly() ? null : ratingForKey(event.key, this.value());
+    if (rating !== null) {
       event.preventDefault();
-      this.value.set(Math.min(MAX_RATING, Math.max(MIN_RATING, next[event.key])));
+      this.value.set(rating);
     }
-  }
-
-  private ratingAt(event: MouseEvent, star: number): number {
-    const { left, width } = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    return event.clientX - left < width / 2 ? star - STEP : star;
   }
 }

@@ -9,15 +9,22 @@ import { ApiErrorBody } from '@core/models/api.model';
  * Ademas cubre los fallos que nunca pasan por el backend: timeout, error de
  * red, o una respuesta HTML inesperada (por ejemplo el cuerpo del 308 de
  * `/api/books` sin barra final).
+ *
+ * - `status`: codigo HTTP, o 0 si la peticion nunca llego al servidor (DNS, CORS,
+ *   backend caido, timeout).
+ * - `details`: errores de validacion; vacia si el backend no los envio.
+ * - `url`: lo que se estaba pidiendo, util para depurar.
+ * - `isConflict` (409) cubre conflictos con datos existentes.
+ * - `isNotFound` (404): ojo, tambien se usa para "no es tuyo".
+ * - `isValidation` (400) exige que el backend haya enviado detalles.
+ * - `displayMessage` es el mensaje listo para mostrar.
+ *
+ * `setPrototypeOf` hace falta para que `instanceof` funcione al compilar a ES2022
+ * con cadenas de prototipos separadas.
  */
 export class ApiError extends Error {
-  /** Codigo HTTP, o 0 si la peticion nunca llego al servidor. */
   readonly status: number;
-
-  /** Lista de errores de validacion. Vacia si el backend no los envio. */
   readonly details: string[];
-
-  /** URL que se estaba pidiendo, util para depurar. */
   readonly url: string | null;
 
   constructor(status: number, message: string, details: string[] = [], url: string | null = null) {
@@ -27,37 +34,29 @@ export class ApiError extends Error {
     this.details = details;
     this.url = url;
 
-    // Necesario para que `instanceof` funcione al compilar a ES2022 con
-    // cadenas de prototipos separadas.
     Object.setPrototypeOf(this, ApiError.prototype);
   }
 
-  /** El backend respondio 401: token ausente, invalido o expirado. */
   get isUnauthorized(): boolean {
     return this.status === 401;
   }
 
-  /** El backend respondio 409: conflicto con datos existentes o sin stock. */
   get isConflict(): boolean {
     return this.status === 409;
   }
 
-  /** El backend respondio 404. Ojo: tambien se usa para "no es tuyo". */
   get isNotFound(): boolean {
     return this.status === 404;
   }
 
-  /** El backend respondio 400 con errores de validacion. */
   get isValidation(): boolean {
     return this.status === 400 && this.details.length > 0;
   }
 
-  /** No se pudo contactar con el servidor (DNS, CORS, backend caido, timeout). */
   get isNetwork(): boolean {
     return this.status === 0;
   }
 
-  /** Mensaje listo para mostrar: el mas largo de los dos campos. */
   get displayMessage(): string {
     if (this.isValidation && this.details.length > 1) {
       return this.details.join(' · ');

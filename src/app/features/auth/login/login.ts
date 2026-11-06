@@ -1,22 +1,27 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ApiError } from '@core/api/api-error';
-import { AuthService } from '@core/services/auth.service';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AccountService } from '@core/services/account.service';
 import { ErrorBanner } from '@shared/components/error-banner/error-banner';
 import { FolderButton } from '@shared/components/folder-button/folder-button';
 import { WindowCard } from '@shared/components/window-card/window-card';
-import { PendingSession } from '@core/models';
+import { PendingLogin } from '../pending-login';
 import { SessionPending } from '../session-pending/session-pending';
 
+/**
+ * `returnUrl` lo inyecta `authGuard` con la ruta que el usuario intentaba abrir.
+ * Solo se acepta una ruta interna que empiece por `/`, para que el login no se
+ * convierta en un redirector hacia sitios externos.
+ */
+function safeReturnUrl(value: string | null): string {
+  return value !== null && value.startsWith('/') ? value : '/libros';
+}
+
+/**
+ * El backend exige ambos campos y su mensaje es "email es requerido" / "password
+ * es requerido". Las validaciones del cliente replican las suyas para no gastar
+ * un 400 en cada intento, pero la autoridad sigue siendo la respuesta del servidor.
+ */
 @Component({
   selector: 'bv-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,78 +30,28 @@ import { SessionPending } from '../session-pending/session-pending';
   styleUrl: '../auth-form.scss',
 })
 export class Login {
-  private readonly fb = inject(FormBuilder);
-  private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
-
-  protected readonly submitting = signal(false);
-  protected readonly error = signal<ApiError | null>(null);
-  /** Contraseña correcta: se espera que toque "Verificar Sesión" en el correo. */
-  protected readonly pending = signal<PendingSession | null>(null);
-
-  /**
-   * `returnUrl` lo inyecta `authGuard` con la ruta que el usuario intentaba
-   * abrir. Solo se acepta una ruta interna que empiece por `/`, para que el
-   * login no se convierta en un redirector hacia sitios externos.
-   */
-  private readonly returnUrl = this.safeReturnUrl(
-    this.route.snapshot.queryParamMap.get('returnUrl'),
+  private readonly account = inject(AccountService);
+  private readonly returnUrl = safeReturnUrl(
+    inject(ActivatedRoute).snapshot.queryParamMap.get('returnUrl'),
   );
 
-  protected readonly email = computed(() => this.form.controls.email);
-  protected readonly password = computed(() => this.form.controls.password);
+  protected readonly flow = new PendingLogin();
 
-  /**
-   * El backend exige ambos campos y su mensaje es "email es requerido" /
-   * "password es requerido". Las validaciones del cliente replican las suyas
-   * para no gastar un 400 en cada intento, pero la autoridad sigue siendo la
-   * respuesta del servidor.
-   */
-  protected readonly form = this.fb.nonNullable.group({
+  protected readonly form = inject(FormBuilder).nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
 
   protected submit(): void {
-    if (this.pending() !== null) {
-      return;
-    }
-    if (this.form.invalid || this.submitting()) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.submitting.set(true);
-    this.error.set(null);
-
-    this.auth
-      .login(this.form.getRawValue())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (pending) => {
-          this.pending.set(pending);
-          this.submitting.set(false);
-        },
-        error: (error: ApiError) => {
-          this.error.set(error);
-          this.submitting.set(false);
-        },
-      });
+    this.flow.submit(this.form, () => this.account.login(this.form.getRawValue()));
   }
 
-  /** Se tocó "Verificar Sesión": la sesión ya está guardada. */
   protected onVerified(): void {
-    void this.router.navigateByUrl(this.returnUrl);
+    this.flow.goTo(this.returnUrl);
   }
 
   protected cancelPending(): void {
-    this.pending.set(null);
+    this.flow.reset();
     this.form.controls.password.reset();
-  }
-
-  private safeReturnUrl(value: string | null): string {
-    return value !== null && value.startsWith('/') ? value : '/libros';
   }
 }

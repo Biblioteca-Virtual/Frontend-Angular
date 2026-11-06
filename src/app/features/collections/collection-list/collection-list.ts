@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Observable, of, switchMap } from 'rxjs';
 import { ApiError } from '@core/api/api-error';
-import { AsyncState } from '@core/api/async-state';
+import { AsyncState } from '@core/state/async-state';
 import { ApiBook, ApiCollection } from '@core/models';
 import { BookService } from '@core/services/book.service';
 import { CollectionService } from '@core/services/collection.service';
@@ -16,6 +16,10 @@ import { WindowCard } from '@shared/components/window-card/window-card';
 /**
  * Listado de colecciones del usuario (Colecciones.svg) con el alta en el mismo
  * panel (Agregar colección.svg).
+ *
+ * Al crear, el libro elegido es opcional ('' significa ninguno) y se agrega en
+ * una segunda petición: el alta del backend solo recibe el nombre. Si falló solo
+ * el libro, la colección ya existe, así que se recarga la lista.
  */
 @Component({
   selector: 'bv-collection-list',
@@ -37,7 +41,6 @@ export class CollectionList {
   protected readonly actionError = signal<ApiError | null>(null);
 
   protected readonly nombre = signal('');
-  /** Libro opcional para empezar la colección con algo; '' significa ninguno. */
   protected readonly libroId = signal<number | ''>('');
 
   constructor() {
@@ -59,10 +62,6 @@ export class CollectionList {
     this.actionError.set(null);
   }
 
-  /**
-   * Crea la colección y, si se eligió un libro, lo agrega en una segunda
-   * petición: el alta del backend solo recibe el nombre.
-   */
   protected create(): void {
     const nombre = this.nombre().trim();
     if (!nombre || this.saving()) {
@@ -91,7 +90,6 @@ export class CollectionList {
         error: (error: ApiError) => {
           this.actionError.set(error);
           this.saving.set(false);
-          // Si falló solo el libro, la colección ya existe: se recarga la lista.
           void this.state.run(this.collections.list());
         },
       });

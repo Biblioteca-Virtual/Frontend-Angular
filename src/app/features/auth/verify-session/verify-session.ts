@@ -11,15 +11,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '@core/api/api-error';
 import { ApiUser } from '@core/models';
-import { AuthService } from '@core/services/auth.service';
+import { SessionVerificationService } from '@core/services/session-verification.service';
 import { Brand } from '@shared/components/brand/brand';
 import { WindowCard } from '@shared/components/window-card/window-card';
 
 /** Tiempo que se muestra "¡Sesión verificada!" antes de ir a la biblioteca. */
 const REDIRECT_DELAY_MS = 2500;
 
+const invalidLinkError = (): ApiError =>
+  new ApiError(400, 'Datos inválidos', ['El link de verificación no es válido']);
+
 /**
  * Destino del botón "Verificar Sesión" del correo: `/verificar-sesion?token=...`.
+ * El query param `token` llega enlazado por `withComponentInputBinding`.
  *
  * Verifica el inicio de sesión: la pestaña donde se escribió la contraseña
  * entra sola, y esta también queda logueada.
@@ -32,11 +36,10 @@ const REDIRECT_DELAY_MS = 2500;
   styleUrls: ['../auth-form.scss', './verify-session.scss'],
 })
 export class VerifySession implements OnInit {
-  private readonly auth = inject(AuthService);
+  private readonly verification = inject(SessionVerificationService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Query param `token`, enlazado por `withComponentInputBinding`. */
   readonly token = input<string>();
 
   protected readonly verifying = signal(true);
@@ -46,12 +49,12 @@ export class VerifySession implements OnInit {
   ngOnInit(): void {
     const token = this.token();
     if (!token) {
-      this.error.set(new ApiError(400, 'Datos inválidos', ['El link de verificación no es válido']));
+      this.error.set(invalidLinkError());
       this.verifying.set(false);
       return;
     }
 
-    this.auth
+    this.verification
       .verifySession(token)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

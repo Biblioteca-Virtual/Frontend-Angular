@@ -1,0 +1,32 @@
+.collection-add {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  font-size: 1.05rem;
+
+  .info-label {
+    min-width: 0;
+  }
+
+  &__select {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--vl-input-gold);
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--vl-input-text);
+  }
+
+  &__link {
+    color: #8c6019;
+    font-weight: 600;
+  }
+
+  &__ok {
+    font-size: 0.92rem;
+    color: #2f6b1f;
+  }
+}
