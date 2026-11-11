@@ -13,7 +13,7 @@
 | Índice de calidad de servicios | **100/100** (mínimo 50) |
 | Criterios cumplidos | **14/14** |
 | Aprobado (semáforo) | **SI** |
-| Código (LOC) | 3,997 |
+| Código (LOC) | 4,299 |
 | Archivos de código | 72 |
 | Tests (archivos) | 11 |
 | Cobertura de líneas | no aplica (frontend sin herramienta de cobertura E2E) |
@@ -26,7 +26,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Máximo Aznar Massut | 7 | 9,013 | 679 | 457 | 7 | 100% |
+| Máximo Aznar Massut | 8 | 9,315 | 690 | 457 | 8 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -36,7 +36,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| Máximo Aznar Massut | 11 | 43% | 14 d | 64% | **37** | No aprueba | Cumplimiento 43% (mín. 50%) |
+| Máximo Aznar Massut | 12 | 47% | 14 d | 100% | **44** | No aprueba | Cumplimiento 47% (mín. 50%) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -108,7 +108,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 3997 LOC))_
+- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 4299 LOC))_
 
 ### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
@@ -134,11 +134,11 @@ _Cumple **todos** los criterios del semáforo: no hay nada que arreglar para apr
 
 ## 6. Actividad en clase (miércoles y viernes)
 
-> Se consideran las **23 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
+> Se consideran las **26 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
 
 ### Máximo Aznar Massut
 
-**12/23 clases con actividad** · 20 commits · 17 merges
+**14/26 clases con actividad** · 28 commits · 25 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -165,6 +165,9 @@ _Cumple **todos** los criterios del semáforo: no hay nada que arreglar para apr
 | 2026-10-23 | No | sin actividad | 0 / 0 |
 | 2026-10-28 | **Sí** | Backend-Flask, Frontend-Angular | 2 / 2 |
 | 2026-10-30 | **Sí** | Backend-Flask, Frontend-Angular | 2 / 2 |
+| 2026-11-04 | No | sin actividad | 0 / 0 |
+| 2026-11-06 | **Sí** | Backend-Flask, Frontend-Angular | 4 / 4 |
+| 2026-11-11 | **Sí** | Backend-Flask, Frontend-Angular | 4 / 4 |
 
 ## 7. Anexo: dónde mirar
 
