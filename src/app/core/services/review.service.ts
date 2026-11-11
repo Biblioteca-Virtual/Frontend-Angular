@@ -1,3 +1,4 @@
+/** Servicio HTTP de reseñas. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -27,26 +28,32 @@ import {
 export class ReviewService {
   private readonly http = inject(HttpClient);
 
+  /** todas las reseñas de todos los usuarios */
   list(): Observable<ApiReview[]> {
     return dataRequest(this.http.get<ApiEnvelope<ApiReview[]>>(API_ENDPOINTS.reviews));
   }
 
+  /** reseñas de un libro, incluidas las de títulos equivalentes */
   forBook(bookId: number): Observable<ApiReview[]> {
     return dataRequest(this.http.get<ApiEnvelope<ApiReview[]>>(API_ENDPOINTS.bookReviews(bookId)));
   }
 
+  /** una reseña por su id */
   getById(id: number): Observable<ApiReview> {
     return dataRequest(this.http.get<ApiEnvelope<ApiReview>>(API_ENDPOINTS.review(id)));
   }
 
+  /** publica una reseña */
   create(payload: CreateReviewRequest): Observable<ApiReview> {
     return dataRequest(this.http.post<ApiEnvelope<ApiReview>>(API_ENDPOINTS.reviews, payload));
   }
 
+  /** edita la calificación o el comentario de la reseña propia */
   update(id: number, payload: UpdateReviewRequest): Observable<ApiReview> {
     return dataRequest(this.http.put<ApiEnvelope<ApiReview>>(API_ENDPOINTS.review(id), payload));
   }
 
+  /** borra la reseña propia */
   delete(id: number): Observable<string> {
     return messageRequest(this.http.delete<ApiMessage>(API_ENDPOINTS.review(id)));
   }

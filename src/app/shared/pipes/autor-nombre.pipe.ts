@@ -1,3 +1,4 @@
+/** Pipe para mostrar nombres de autores. */
 import { Pipe, PipeTransform } from '@angular/core';
 import { ApiAuthor, ApiUser } from '@core/models';
 
@@ -20,6 +21,7 @@ type ConNombre = ApiAuthor | ApiUser;
  */
 @Pipe({ name: 'autorNombre', pure: true })
 export class AutorNombrePipe implements PipeTransform {
+  /** un autor, una lista de autores o nada; sin datos devuelve un guion */
   transform(value: ConNombre | ConNombre[] | null | undefined): string {
     if (value === null || value === undefined) {
       return '—';
@@ -35,6 +37,7 @@ export class AutorNombrePipe implements PipeTransform {
     return this.nombreCompleto(value);
   }
 
+  /** nombre y apellido unidos, o un guion si ambos están vacíos */
   private nombreCompleto(value: ConNombre): string {
     return `${value.nombre} ${value.apellido}`.trim() || '—';
   }

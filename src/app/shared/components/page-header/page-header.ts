@@ -1,3 +1,4 @@
+/** Encabezado de página. */
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
@@ -52,6 +53,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   `,
 })
 export class PageHeader {
+  /** título y subtítulo opcional */
   readonly title = input.required<string>();
   readonly subtitle = input<string | null>(null);
 }

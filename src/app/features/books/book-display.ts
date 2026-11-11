@@ -1,3 +1,4 @@
+/** Funciones para mostrar datos de los libros: progreso y ubicación. */
 import { ApiBook, BOOK_LOCATIONS, BookLocation } from '@core/models';
 
 /** Porcentaje leído, de 0 a 100. Sin páginas totales cargadas vale 0. */
@@ -18,6 +19,7 @@ export function bookPercentage(book: ApiBook | null | undefined): number {
   return book.porcentaje_lectura ?? readingPercentage(book.paginas_totales, book.paginas_leidas);
 }
 
+/** Texto de la ubicación del libro (por ejemplo, "Books/Kindle"). */
 export function locationLabel(location: BookLocation): string {
   return BOOK_LOCATIONS.find((item) => item.value === location)?.label ?? 'Físico';
 }

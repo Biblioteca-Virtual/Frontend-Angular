@@ -1,3 +1,4 @@
+/** Servicio de la verificación del inicio de sesión por correo. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, tap } from 'rxjs';
@@ -20,6 +21,7 @@ export class SessionVerificationService {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
 
+  /** pregunta el estado; al verificarse inicia la sesión y devuelve el resultado */
   checkSession(consulta: string): Observable<LoginResult | null> {
     return dataRequest(
       this.http.post<ApiEnvelope<SessionStatus>>(API_ENDPOINTS.auth.sessionStatus, { consulta }),
@@ -33,12 +35,14 @@ export class SessionVerificationService {
     );
   }
 
+  /** confirma la sesión con el token del link e inicia la sesión en esta pestaña */
   verifySession(token: string): Observable<LoginResult> {
     return dataRequest(
       this.http.post<ApiEnvelope<LoginResult>>(API_ENDPOINTS.auth.verifySession, { token }),
     ).pipe(tap((result) => this.auth.startSession(result)));
   }
 
+  /** pide otro correo de verificación */
   resendSessionEmail(consulta: string): Observable<ResendResult> {
     return dataRequest(
       this.http.post<ApiEnvelope<ResendResult>>(API_ENDPOINTS.auth.resendSessionEmail, {

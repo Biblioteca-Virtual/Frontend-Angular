@@ -1,3 +1,4 @@
+/** Tests de la lectura de los claims y del vencimiento del JWT. */
 import { describe, expect, it } from 'vitest';
 import { decodeJwtClaims, isTokenExpired } from './token-storage.service';
 

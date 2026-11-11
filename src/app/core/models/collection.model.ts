@@ -1,3 +1,4 @@
+/** Tipos de las colecciones de libros. */
 import { ApiDate } from './api.model';
 import { ApiBook } from './book.model';
 

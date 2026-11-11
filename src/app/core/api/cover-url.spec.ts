@@ -1,3 +1,4 @@
+/** Tests de la construcción de URLs de portadas. */
 import { describe, expect, it } from 'vitest';
 import { API_URL } from '@core/api/api.config';
 import { resolveCoverUrl } from './cover-url';

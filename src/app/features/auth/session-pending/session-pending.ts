@@ -1,3 +1,4 @@
+/** Aviso de "revisá tu correo" mientras se espera la verificación del inicio de sesión. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -166,17 +167,21 @@ export class SessionPending implements OnInit {
   private readonly verification = inject(SessionVerificationService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** datos de la sesión pendiente que devolvió el login */
   readonly pending = input.required<PendingSession>();
 
+  /** avisa al padre cuando la sesión se verificó o cuando el usuario cancela */
   readonly verified = output<LoginResult>();
   readonly cancel = output<void>();
 
+  /** error, correo enviado, minutos de validez y estado del reenvío */
   protected readonly error = signal<ApiError | null>(null);
   protected readonly sent = signal(true);
   protected readonly minutes = signal(0);
   protected readonly resending = signal(false);
   protected readonly resent = signal(false);
 
+  /** pregunta al backend cada pocos segundos hasta que la sesión quede verificada */
   ngOnInit(): void {
     this.sent.set(this.pending().correo_enviado);
     this.minutes.set(this.pending().expira_en_minutos);
@@ -194,6 +199,7 @@ export class SessionPending implements OnInit {
       });
   }
 
+  /** pide otro correo y actualiza los minutos de validez */
   protected resend(): void {
     if (this.resending()) {
       return;

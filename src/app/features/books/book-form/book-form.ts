@@ -1,3 +1,4 @@
+/** Pantalla con el formulario para crear o editar un libro. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -47,13 +48,16 @@ export class BookForm {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** id del libro a editar, tomado de la ruta; vacío al crear */
   readonly bookId = input<string | number | undefined>(undefined);
 
+  /** verdadero cuando hay un id, es decir, en modo edición */
   protected readonly isEditing = computed(() => {
     const raw = this.bookId();
     return raw !== undefined && raw !== null && raw !== '';
   });
 
+  /** error, envío, carga, subida de portada, portada elegida y autores elegidos */
   protected readonly error = signal<ApiError | null>(null);
   protected readonly submitting = signal(false);
   protected readonly loading = signal(false);
@@ -61,10 +65,12 @@ export class BookForm {
   protected readonly cover = signal('');
   protected readonly selectedAuthors = signal<ApiAuthor[]>([]);
 
+  /** partes del formulario: categorías, opciones de ubicación y valores editables */
   protected readonly categories = new BookCategories();
   protected readonly locations = BOOK_LOCATIONS;
   protected readonly form = emptyBookForm();
 
+  /** carga las categorías y, en modo edición, los datos del libro */
   constructor() {
     this.categories.load();
     effect(() => {
@@ -75,10 +81,12 @@ export class BookForm {
     });
   }
 
+  /** porcentaje leído según las páginas escritas en el formulario */
   protected get percentage(): number {
     return readingPercentage(this.form.paginas_totales, this.form.paginas_leidas);
   }
 
+  /** crea o actualiza el libro y abre su detalle; ante un error lo muestra */
   protected submit(): void {
     if (this.submitting()) {
       return;
@@ -105,6 +113,7 @@ export class BookForm {
     });
   }
 
+  /** carga el libro a editar y completa el formulario con sus datos */
   private load(id: number): void {
     this.loading.set(true);
     this.books

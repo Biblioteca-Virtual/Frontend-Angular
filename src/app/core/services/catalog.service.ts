@@ -1,3 +1,4 @@
+/** Servicio HTTP de categorías y autores. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -15,20 +16,24 @@ import { ApiAuthor, ApiCategory, ApiEnvelope } from '@core/models';
 export class CatalogService {
   private readonly http = inject(HttpClient);
 
+  /** todas las categorías */
   getCategories(): Observable<ApiCategory[]> {
     return dataRequest(this.http.get<ApiEnvelope<ApiCategory[]>>(API_ENDPOINTS.categories));
   }
 
+  /** crea una categoría (o devuelve la que ya existía) */
   createCategory(nombre: string): Observable<ApiCategory> {
     return dataRequest(
       this.http.post<ApiEnvelope<ApiCategory>>(API_ENDPOINTS.categories, { nombre }),
     );
   }
 
+  /** todos los autores */
   getAuthors(): Observable<ApiAuthor[]> {
     return dataRequest(this.http.get<ApiEnvelope<ApiAuthor[]>>(API_ENDPOINTS.authors));
   }
 
+  /** crea un autor a partir del nombre completo (o devuelve el existente) */
   createAuthor(nombreCompleto: string): Observable<ApiAuthor> {
     return dataRequest(
       this.http.post<ApiEnvelope<ApiAuthor>>(API_ENDPOINTS.authors, {

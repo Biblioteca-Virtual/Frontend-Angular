@@ -1,3 +1,4 @@
+/** Servicio que consulta el estado del backend. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -23,6 +24,7 @@ import { HealthStatus } from '@core/models';
 export class HealthService {
   private readonly http = inject(HttpClient);
 
+  /** consulta /health; los errores llegan ya convertidos al error de la api */
   check(): Observable<HealthStatus> {
     return this.http.get<HealthStatus>(API_ENDPOINTS.health).pipe(catchApiError<HealthStatus>());
   }

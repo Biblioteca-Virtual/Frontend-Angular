@@ -1,3 +1,4 @@
+/** Panel de reseñas de la comunidad dentro del detalle del libro. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -49,23 +50,28 @@ export class BookReviewsPanel {
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** libro del que se muestran las reseñas */
   readonly bookId = input.required<number>();
 
+  /** reseñas cargadas, error de una acción, formulario abierto y borrado pendiente */
   protected readonly state = new AsyncState<ApiReview[]>();
   protected readonly actionError = signal<ApiError | null>(null);
   protected readonly writing = signal(false);
   protected readonly reviewToDelete = signal<ApiReview | null>(null);
   protected readonly deleting = signal(false);
 
+  /** id del usuario logueado y lista de reseñas lista para la plantilla */
   protected readonly userId = computed(() => this.auth.user()?.id);
   protected readonly reviews = computed(() => this.state.data() ?? []);
 
+  /** verdadero cuando el usuario ya reseñó este mismo libro */
   protected readonly hasOwnReview = computed(() =>
     this.reviews().some(
       (review) => review.usuario_id === this.userId() && review.libro_id === this.bookId(),
     ),
   );
 
+  /** promedio de estrellas; null sin reseñas */
   protected readonly averageRating = computed(() => {
     const reviews = this.reviews();
     if (reviews.length === 0) {
@@ -74,22 +80,26 @@ export class BookReviewsPanel {
     return reviews.reduce((sum, review) => sum + review.calificacion, 0) / reviews.length;
   });
 
+  /** carga las reseñas cada vez que cambia el libro */
   constructor() {
     effect(() => {
       void this.state.run(this.reviewService.forBook(this.bookId()));
     });
   }
 
+  /** abre el formulario de reseña */
   protected startWriting(): void {
     this.actionError.set(null);
     this.writing.set(true);
   }
 
+  /** agrega la reseña publicada al principio de la lista */
   protected onPublished(created: ApiReview): void {
     this.state.setData([created, ...this.reviews()]);
     this.writing.set(false);
   }
 
+  /** borra la reseña propia y la saca de la lista */
   protected deleteReview(review: ApiReview): void {
     if (this.deleting()) {
       return;

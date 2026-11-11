@@ -1,3 +1,4 @@
+/** Tests del pipe de fechas. */
 import { describe, expect, it } from 'vitest';
 import { BvDatePipe } from './bv-date.pipe';
 

@@ -1,3 +1,4 @@
+/** Tipos de las reseñas. */
 import { ApiDate } from './api.model';
 
 /** Calificacion valida: de 0.5 a 5, de a 0.5 (admite medias estrellas). */

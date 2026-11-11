@@ -1,3 +1,4 @@
+/** Diálogo modal reutilizable para confirmar acciones destructivas. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -85,17 +86,21 @@ import {
   `,
 })
 export class ConfirmDialog {
+  /** abierto o cerrado, textos del diálogo y petición en curso */
   readonly open = input(false);
   readonly title = input.required<string>();
   readonly message = input<string | null>(null);
   readonly confirmLabel = input('Eliminar');
   readonly busy = input(false);
 
+  /** avisa al padre si se confirmó o se canceló */
   readonly confirmed = output<void>();
   readonly cancelled = output<void>();
 
+  /** referencia al elemento dialog de la plantilla */
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
+  /** abre o cierra el diálogo nativo cuando cambia la entrada open */
   constructor() {
     effect(() => {
       const element = this.dialog().nativeElement;
@@ -107,6 +112,7 @@ export class ConfirmDialog {
     });
   }
 
+  /** escape: no deja que el navegador lo cierre solo y avisa al padre */
   protected onCancel(event: Event): void {
     event.preventDefault();
     if (!this.busy()) {
@@ -114,6 +120,7 @@ export class ConfirmDialog {
     }
   }
 
+  /** clic en el fondo: cancela solo cuando el clic cae fuera de la caja */
   protected onBackdrop(event: MouseEvent): void {
     const element = this.dialog().nativeElement;
     if (event.target !== element || this.busy()) {

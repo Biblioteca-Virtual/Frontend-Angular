@@ -1,3 +1,4 @@
+/** Tests de los filtros de la biblioteca. */
 import { beforeEach, describe, expect, it } from 'vitest';
 import { ApiBook } from '@core/models';
 import { BookFilters, categoryNames } from './book-filters';

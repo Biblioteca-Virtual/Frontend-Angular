@@ -1,3 +1,4 @@
+/** Tipos del estado del backend. */
 /** Estado de la base de datos segun `GET /health`. */
 export type DatabaseStatus = 'ok' | 'indisponible';
 

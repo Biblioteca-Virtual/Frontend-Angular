@@ -1,3 +1,4 @@
+/** Pantalla de detalle de un libro. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -46,15 +47,19 @@ export class BookDetail {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** id del libro, tomado del parámetro de la ruta */
   readonly bookId = input.required<number | string>();
 
+  /** el id convertido a número */
   private readonly numericId = computed(() => Number(this.bookId()));
 
+  /** libro cargado, error de una acción y estado del borrado con su confirmación */
   protected readonly state = new AsyncState<ApiBook>();
   protected readonly actionError = signal<ApiError | null>(null);
   protected readonly deleting = signal(false);
   protected readonly confirmingDelete = signal(false);
 
+  /** datos derivados del libro para la plantilla: progreso, portada y ubicación */
   protected readonly percentage = computed(() => bookPercentage(this.state.data()));
   protected readonly coverUrl = computed(() => resolveCoverUrl(this.state.data()?.imagen_portada));
   protected readonly location = computed(() => {
@@ -62,6 +67,7 @@ export class BookDetail {
     return book ? locationLabel(book.ubicacion) : '';
   });
 
+  /** carga el libro cada vez que cambia el id de la ruta */
   constructor() {
     effect(() => {
       const id = this.numericId();
@@ -71,6 +77,7 @@ export class BookDetail {
     });
   }
 
+  /** borra el libro y vuelve a la biblioteca; ante un error lo muestra y cierra la confirmación */
   protected remove(): void {
     if (this.deleting()) {
       return;

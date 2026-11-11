@@ -1,3 +1,4 @@
+/** Pantalla de registro de una cuenta nueva. */
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { switchMap } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -39,6 +40,7 @@ export class Register {
     password: ['', [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH)]],
   });
 
+  /** crea la cuenta y enseguida inicia sesión con los mismos datos */
   protected submit(): void {
     this.flow.submit(this.form, () => {
       const value = this.form.getRawValue();
@@ -50,10 +52,12 @@ export class Register {
     });
   }
 
+  /** sesión verificada: entra a la biblioteca */
   protected onVerified(): void {
     this.flow.goTo('/libros');
   }
 
+  /** al cancelar, la cuenta ya existe: se vuelve al login */
   protected cancelPending(): void {
     this.flow.goTo('/login');
   }

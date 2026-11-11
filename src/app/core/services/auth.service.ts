@@ -1,3 +1,4 @@
+/** Servicio que mantiene la sesión actual y el usuario logueado. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
@@ -24,21 +25,25 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(TokenStorageService);
 
+  /** usuario en memoria, arrancando con el que quedó guardado en el navegador */
   private readonly currentUser = signal<ApiUser | null>(this.storage.user());
 
   readonly user = this.currentUser.asReadonly();
   readonly isLoggedIn = this.storage.isAuthenticated;
 
+  /** nombre y apellido para mostrar; vacío sin sesión */
   readonly displayName = computed(() => {
     const user = this.currentUser();
     return user === null ? '' : `${user.nombre} ${user.apellido}`.trim();
   });
 
+  /** guarda el token y el usuario que devolvió la verificación por correo */
   startSession(result: LoginResult): void {
     this.storage.setSession(result.token, result.usuario);
     this.currentUser.set(result.usuario);
   }
 
+  /** pide los datos actualizados del usuario y los guarda */
   me(): Observable<ApiUser> {
     return dataRequest(this.http.get<ApiEnvelope<ApiUser>>(API_ENDPOINTS.auth.me)).pipe(
       tap((user) => {
@@ -48,11 +53,13 @@ export class AuthService {
     );
   }
 
+  /** cierra la sesión: borra el token y el usuario guardados */
   logout(): void {
     this.storage.clear();
     this.currentUser.set(null);
   }
 
+  /** descarta la sesión cuando el backend respondió 401 */
   invalidate(): void {
     this.storage.clear();
     this.currentUser.set(null);

@@ -1,3 +1,4 @@
+/** Servicio HTTP de las colecciones del usuario. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -17,14 +18,17 @@ import { ApiCollection, ApiEnvelope, ApiMessage, CollectionNameRequest } from '@
 export class CollectionService {
   private readonly http = inject(HttpClient);
 
+  /** colecciones del usuario, sin la lista de libros */
   list(): Observable<ApiCollection[]> {
     return dataRequest(this.http.get<ApiEnvelope<ApiCollection[]>>(API_ENDPOINTS.collections));
   }
 
+  /** una colección con todos sus libros */
   getById(id: number): Observable<ApiCollection> {
     return dataRequest(this.http.get<ApiEnvelope<ApiCollection>>(API_ENDPOINTS.collection(id)));
   }
 
+  /** crea una colección vacía con ese nombre */
   create(nombre: string): Observable<ApiCollection> {
     const payload: CollectionNameRequest = { nombre };
     return dataRequest(
@@ -32,6 +36,7 @@ export class CollectionService {
     );
   }
 
+  /** cambia el nombre de una colección */
   rename(id: number, nombre: string): Observable<ApiCollection> {
     const payload: CollectionNameRequest = { nombre };
     return dataRequest(
@@ -39,10 +44,12 @@ export class CollectionService {
     );
   }
 
+  /** borra la colección */
   delete(id: number): Observable<string> {
     return messageRequest(this.http.delete<ApiMessage>(API_ENDPOINTS.collection(id)));
   }
 
+  /** agrega un libro a la colección y devuelve la colección actualizada */
   addBook(id: number, libroId: number): Observable<ApiCollection> {
     return dataRequest(
       this.http.post<ApiEnvelope<ApiCollection>>(API_ENDPOINTS.collectionBooks(id), {
@@ -51,6 +58,7 @@ export class CollectionService {
     );
   }
 
+  /** saca un libro de la colección y devuelve la colección actualizada */
   removeBook(id: number, libroId: number): Observable<ApiCollection> {
     return dataRequest(
       this.http.delete<ApiEnvelope<ApiCollection>>(API_ENDPOINTS.collectionBook(id, libroId)),

@@ -1,3 +1,4 @@
+/** Tests del cálculo del progreso y de las etiquetas de ubicación. */
 import { describe, expect, it } from 'vitest';
 import { ApiBook } from '@core/models';
 import { bookPercentage, locationLabel, readingPercentage } from './book-display';

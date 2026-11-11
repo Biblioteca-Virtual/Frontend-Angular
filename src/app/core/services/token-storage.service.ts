@@ -1,6 +1,8 @@
+/** Guardado del token y del usuario en el navegador, y lectura del vencimiento del JWT. */
 import { Injectable, computed, signal } from '@angular/core';
 import { ApiUser, JwtClaims } from '@core/models';
 
+/** Claves de localStorage donde se guardan el token y el usuario. */
 const TOKEN_KEY = 'bv.token';
 const USER_KEY = 'bv.usuario';
 
@@ -22,17 +24,20 @@ const USER_KEY = 'bv.usuario';
  */
 @Injectable({ providedIn: 'root' })
 export class TokenStorageService {
+  /** valores actuales, leídos del navegador al iniciar la aplicación */
   private readonly _token = signal<string | null>(this.read(TOKEN_KEY));
   private readonly _user = signal<ApiUser | null>(this.readJson<ApiUser>(USER_KEY));
 
   readonly token = this._token.asReadonly();
   readonly user = this._user.asReadonly();
 
+  /** hay sesión válida: existe un token y todavía no venció */
   readonly isAuthenticated = computed(() => {
     const token = this._token();
     return token !== null && !isTokenExpired(token);
   });
 
+  /** guarda el token y el usuario en memoria y en el navegador */
   setSession(token: string, user: ApiUser): void {
     this._token.set(token);
     this._user.set(user);
@@ -40,11 +45,13 @@ export class TokenStorageService {
     writeJson(USER_KEY, user);
   }
 
+  /** actualiza solo el usuario guardado */
   setUser(user: ApiUser): void {
     this._user.set(user);
     writeJson(USER_KEY, user);
   }
 
+  /** borra la sesión de memoria y del navegador */
   clear(): void {
     this._token.set(null);
     this._user.set(null);
@@ -52,6 +59,7 @@ export class TokenStorageService {
     remove(USER_KEY);
   }
 
+  /** lee una clave; devuelve null si el navegador bloquea el almacenamiento */
   private read(key: string): string | null {
     try {
       return localStorage.getItem(key);
@@ -60,6 +68,7 @@ export class TokenStorageService {
     }
   }
 
+  /** lee y convierte un valor guardado; si está corrupto lo borra y devuelve null */
   private readJson<T>(key: string): T | null {
     const raw = this.read(key);
     if (raw === null) {
@@ -104,6 +113,7 @@ export function decodeJwtClaims(token: string): JwtClaims | null {
   }
 }
 
+/** Decodifica base64url (el formato de las partes de un JWT) a texto UTF-8. */
 function base64UrlDecode(value: string): string {
   const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
   const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
@@ -114,6 +124,7 @@ function base64UrlDecode(value: string): string {
   return new TextDecoder().decode(bytes);
 }
 
+/** Guarda un valor; si el navegador no deja, la sesión solo vive en memoria. */
 function write(key: string, value: string): void {
   try {
     localStorage.setItem(key, value);
@@ -122,10 +133,12 @@ function write(key: string, value: string): void {
   }
 }
 
+/** Guarda un objeto convertido a texto JSON. */
 function writeJson(key: string, value: unknown): void {
   write(key, JSON.stringify(value));
 }
 
+/** Borra una clave, ignorando errores del navegador. */
 function remove(key: string): void {
   try {
     localStorage.removeItem(key);

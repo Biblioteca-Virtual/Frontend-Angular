@@ -1,3 +1,4 @@
+/** Pantalla principal de la biblioteca del usuario. */
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiBook, ApiCollection } from '@core/models';
@@ -26,14 +27,17 @@ export class BookList {
   private readonly books = inject(BookService);
   private readonly collectionService = inject(CollectionService);
 
+  /** libros y colecciones cargados, filtros activos y vista elegida */
   protected readonly state = new AsyncState<ApiBook[]>();
   protected readonly collections = new AsyncState<ApiCollection[]>();
   protected readonly filters = new BookFilters();
   protected readonly viewMode = signal<'overview' | 'complete'>('overview');
 
+  /** categorías disponibles y libros que pasan los filtros */
   protected readonly categories = computed(() => categoryNames(this.state.data() ?? []));
   protected readonly filteredBooks = computed(() => this.filters.apply(this.state.data() ?? []));
 
+  /** al abrir la pantalla carga los libros y las colecciones */
   constructor() {
     void this.state.run(this.books.list());
     void this.collections.run(this.collectionService.list());

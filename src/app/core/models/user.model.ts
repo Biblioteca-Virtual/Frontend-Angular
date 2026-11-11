@@ -1,3 +1,4 @@
+/** Tipos de usuarios, inicio de sesión y verificación por correo. */
 import { ApiDate } from './api.model';
 
 /**

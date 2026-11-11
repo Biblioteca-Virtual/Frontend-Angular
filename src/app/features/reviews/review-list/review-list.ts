@@ -1,3 +1,4 @@
+/** Pantalla con todas las reseñas de la comunidad. */
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -45,19 +46,23 @@ export class ReviewList {
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** reseñas cargadas, error de una acción y publicación en curso */
   protected readonly state = new AsyncState<ApiReview[]>();
   protected readonly actionError = signal<ApiError | null>(null);
   protected readonly submitting = signal(false);
 
+  /** estrellas del borrador, reseña a borrar y borrado en curso */
   protected readonly draftRating = signal(3);
   protected readonly reviewToDelete = signal<ApiReview | null>(null);
   protected readonly deleting = signal(false);
 
+  /** campos del formulario de reseña nueva */
   protected readonly draft = {
     libro_id: '',
     comentario: '',
   };
 
+  /** ids de las reseñas escritas por el usuario logueado */
   protected readonly mine = computed(() => {
     const userId = this.auth.user()?.id;
     return new Set(
@@ -65,14 +70,17 @@ export class ReviewList {
     );
   });
 
+  /** al abrir la pantalla carga todas las reseñas */
   constructor() {
     void this.state.run(this.reviews.list());
   }
 
+  /** verdadero si la reseña es del usuario logueado */
   protected isMine(review: ApiReview): boolean {
     return this.mine().has(review.id);
   }
 
+  /** publica la reseña del borrador; el id del libro tiene que ser un entero positivo */
   protected submit(): void {
     if (this.submitting()) {
       return;
@@ -110,6 +118,7 @@ export class ReviewList {
       });
   }
 
+  /** borra la reseña propia y la saca de la lista */
   protected remove(review: ApiReview): void {
     if (this.deleting()) {
       return;

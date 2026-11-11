@@ -1,3 +1,4 @@
+/** Componente de calificación con estrellas. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 
+/** Rango y paso de la calificación, y el dibujo SVG de una estrella. */
 const MIN_RATING = 0.5;
 const MAX_RATING = 5;
 const STEP = 0.5;
@@ -79,6 +81,7 @@ function ratingAt(event: MouseEvent, star: number): number {
   styleUrl: './star-rating.scss',
 })
 export class StarRating {
+  /** valor elegido (enlace en dos sentidos) y modo solo lectura */
   readonly value = model(3);
   readonly readonly = input(false, { transform: booleanAttribute });
 
@@ -87,25 +90,30 @@ export class StarRating {
   protected readonly starNumbers = [1, 2, 3, 4, 5];
   protected readonly starPath = STAR_PATH;
 
+  /** valor bajo el mouse y valor que se dibuja: la vista previa o el elegido */
   protected readonly preview = signal<number | null>(null);
   protected readonly shown = computed(() => this.preview() ?? this.value());
 
+  /** cuánto se rellena cada estrella, de 0 a 100 */
   protected fillPercent(star: number): number {
     return Math.min(1, Math.max(0, this.shown() - (star - 1))) * 100;
   }
 
+  /** previsualiza el valor bajo el mouse */
   protected onHover(event: MouseEvent, star: number): void {
     if (!this.readonly()) {
       this.preview.set(ratingAt(event, star));
     }
   }
 
+  /** confirma el valor con el clic */
   protected onSelect(event: MouseEvent, star: number): void {
     if (!this.readonly()) {
       this.value.set(ratingAt(event, star));
     }
   }
 
+  /** cambia el valor con el teclado */
   protected onKeydown(event: KeyboardEvent): void {
     const rating = this.readonly() ? null : ratingForKey(event.key, this.value());
     if (rating !== null) {

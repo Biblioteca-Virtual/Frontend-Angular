@@ -1,3 +1,4 @@
+/** Componente con el logo y el nombre de la aplicación. */
 import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 /**
@@ -84,6 +85,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@an
   `,
 })
 export class Brand {
+  /** tamaño del logotipo y si lleva fondo oscuro */
   readonly size = input<'sm' | 'md' | 'lg'>('md');
   readonly chip = input(false, { transform: booleanAttribute });
   /** En el inicio va solo el nombre, para que quede centrado. */

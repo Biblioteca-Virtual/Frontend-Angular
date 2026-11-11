@@ -1,3 +1,4 @@
+/** Modelo de error único de la aplicación y su traducción desde las respuestas HTTP. */
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiErrorBody } from '@core/models/api.model';
 
@@ -27,6 +28,7 @@ export class ApiError extends Error {
   readonly details: string[];
   readonly url: string | null;
 
+  /** guarda el código, el mensaje, los detalles de validación y la url pedida */
   constructor(status: number, message: string, details: string[] = [], url: string | null = null) {
     super(message);
     this.name = 'ApiError';
@@ -37,26 +39,32 @@ export class ApiError extends Error {
     Object.setPrototypeOf(this, ApiError.prototype);
   }
 
+  /** 401: falta el token, es inválido o venció */
   get isUnauthorized(): boolean {
     return this.status === 401;
   }
 
+  /** 409: choca con datos que ya existen */
   get isConflict(): boolean {
     return this.status === 409;
   }
 
+  /** 404: no existe o no pertenece al usuario */
   get isNotFound(): boolean {
     return this.status === 404;
   }
 
+  /** 400 con detalles de validación del backend */
   get isValidation(): boolean {
     return this.status === 400 && this.details.length > 0;
   }
 
+  /** status 0: la petición no llegó al servidor */
   get isNetwork(): boolean {
     return this.status === 0;
   }
 
+  /** mensaje para mostrar: junta varios errores de validación con un punto medio */
   get displayMessage(): string {
     if (this.isValidation && this.details.length > 1) {
       return this.details.join(' · ');

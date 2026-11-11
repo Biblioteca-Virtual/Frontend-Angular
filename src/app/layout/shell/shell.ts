@@ -1,3 +1,4 @@
+/** Marco de la aplicación con la barra de navegación. */
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -22,6 +23,7 @@ export class Shell {
 
   protected readonly auth = inject(AuthService);
 
+  /** cierra la sesión y lleva al login */
   protected logout(): void {
     this.auth.logout();
     void this.router.navigate(['/login']);

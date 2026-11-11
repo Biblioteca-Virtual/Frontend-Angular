@@ -1,3 +1,4 @@
+/** Tests del flujo compartido de login y registro. */
 import { EnvironmentInjector, runInInjectionContext } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';

@@ -1,3 +1,4 @@
+/** Tipos de libros, autores y categorías tal como los envía y recibe la API. */
 /** Autor anidado dentro de `Libro`. */
 export interface ApiAuthor {
   id: number;
@@ -17,6 +18,7 @@ export interface ApiCategory {
 /** Dónde se está leyendo el libro. `kindle` se muestra como "Books/Kindle". */
 export type BookLocation = 'fisico' | 'kindle' | 'web';
 
+/** Opciones de ubicación con el texto que se muestra en los formularios. */
 export const BOOK_LOCATIONS: readonly { value: BookLocation; label: string }[] = [
   { value: 'fisico', label: 'Físico' },
   { value: 'kindle', label: 'Books/Kindle' },
@@ -59,6 +61,7 @@ export interface CreateBookRequest {
 /** Cuerpo de `PUT /api/books/{id}` (actualizacion parcial). */
 export type UpdateBookRequest = Partial<CreateBookRequest>;
 
+/** Cuerpo de `PATCH /api/books/<id>/progress`: cambia solo las páginas. */
 export interface UpdateBookProgressRequest {
   paginas_totales?: number;
   paginas_leidas?: number;

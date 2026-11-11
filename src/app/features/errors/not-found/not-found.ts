@@ -1,6 +1,8 @@
+/** Pantalla de error 404. */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+/** Se muestra en cualquier URL que no coincide con ninguna ruta. */
 @Component({
   selector: 'bv-not-found',
   changeDetection: ChangeDetectionStrategy.OnPush,

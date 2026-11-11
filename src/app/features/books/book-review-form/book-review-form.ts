@@ -1,3 +1,4 @@
+/** Formulario de reseña dentro del detalle del libro. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,16 +28,20 @@ export class BookReviewForm {
   private readonly reviewService = inject(ReviewService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** libro que se reseña */
   readonly bookId = input.required<number>();
 
+  /** avisa al padre la reseña publicada o que se canceló */
   readonly published = output<ApiReview>();
   readonly cancelled = output<void>();
 
+  /** estrellas elegidas, comentario, publicación en curso y error */
   protected readonly rating = signal<ReviewRating>(3);
   protected readonly comment = signal('');
   protected readonly publishing = signal(false);
   protected readonly error = signal<ApiError | null>(null);
 
+  /** publica la reseña; un comentario vacío se envía como null */
   protected publish(): void {
     if (this.publishing()) {
       return;

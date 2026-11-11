@@ -1,3 +1,4 @@
+/** Tests del componente de calificación con estrellas. */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { StarRating } from './star-rating';
