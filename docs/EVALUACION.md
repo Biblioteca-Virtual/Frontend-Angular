@@ -3,21 +3,21 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-06.
+> Generado: 2026-11-11.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | frontend |
-| Índice de calidad de servicios | **22/100** (mínimo 50) |
-| Criterios cumplidos | **11/14** |
-| Aprobado (semáforo) | **NO** |
-| Código (LOC) | 3,783 |
-| Archivos de código | 53 |
-| Tests (archivos) | 5 |
+| Índice de calidad de servicios | **100/100** (mínimo 50) |
+| Criterios cumplidos | **14/14** |
+| Aprobado (semáforo) | **SI** |
+| Código (LOC) | 3,997 |
+| Archivos de código | 72 |
+| Tests (archivos) | 11 |
 | Cobertura de líneas | no aplica (frontend sin herramienta de cobertura E2E) |
-| Capas detectadas | vistas, servicios |
+| Capas detectadas | vistas, servicios, estado |
 | Pushes directos a `main` (sin PR) | 0 |
 
 > **Aprobado** exige las compuertas críticas (**SEC**, **SQL**, **capas**, **índice ≥ 50** y **cobertura ≥ 80 %** cuando aplica) y tolera hasta **3 criterios en rojo** (12/15). No es una nota: sirve para ordenar y priorizar la revisión.
@@ -26,7 +26,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Máximo Aznar Massut | 6 | 8,706 | 345 | 458 | 7 | 100% |
+| Máximo Aznar Massut | 7 | 9,013 | 679 | 457 | 7 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -36,7 +36,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| Máximo Aznar Massut | 10 | 43% | 14 d | 57% | **36** | No aprueba | Cumplimiento 43% (mín. 50%) |
+| Máximo Aznar Massut | 11 | 43% | 14 d | 64% | **37** | No aprueba | Cumplimiento 43% (mín. 50%) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -44,15 +44,11 @@
 
 Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuando el resultado está en rojo, se agregan preguntas para **investigar la causa** (no hay recetas: entender el porqué es parte de la evaluación).
 
-### 1. Índice de calidad de servicios (indice) — A REVISAR
+### 1. Índice de calidad de servicios (indice) — OK
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **22/100** _(mínimo 50)_
-- **Para investigar la causa:**
-    - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
-    - ¿El índice bajó por muchas señales chicas o por una o dos graves?
-    - ¿Se revisó el código integrado después de unir el trabajo de cada integrante?
+- **Tu resultado:** índice **100/100** _(mínimo 50)_
 
 ### 2. Duplicación (DRY) (duplicacion) — OK
 
@@ -76,7 +72,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Si el código está separado en capas reconocibles (backend: presentación / lógica / datos; frontend: vistas / servicios / estado).
 - **Por qué importa:** Sin separación, cada archivo hace de todo y cualquier cambio toca varios lugares a la vez.
-- **Tu resultado:** **2** capa(s) detectada(s): vistas, servicios _(mínimo 2 capas (a partir de 150 LOC))_
+- **Tu resultado:** **3** capa(s) detectada(s): vistas, servicios, estado _(mínimo 2 capas (a partir de 150 LOC))_
 
 ### 6. Acceso a datos dentro del componente (HTTP) — OK
 
@@ -102,37 +98,29 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Son difíciles de leer, probar y reutilizar, y sus cambios tienen efectos inesperados.
 - **Tu resultado:** **0** componente(s) demasiado grande(s) _(máximo 1)_
 
-### 10. Baja cohesión (Coh) — A REVISAR
+### 10. Baja cohesión (Coh) — OK
 
 - **Qué mide:** Una clase o unidad cuyos métodos y campos no están relacionados entre sí.
 - **Por qué importa:** Una unidad que cambia por motivos distintos es frágil y cuesta entenderla.
-- **Tu resultado:** **4** unidad(es) con baja cohesión _(máximo 0)_
-- **Para investigar la causa:**
-    - ¿La unidad agrupa cosas que en realidad pertenecen a lugares distintos?
-    - ¿Cambia por motivos diferentes según la tarea?
-    - ¿Se pensó su responsabilidad antes de escribirla, o se fue agregando?
+- **Tu resultado:** **0** unidad(es) con baja cohesión _(máximo 0)_
 
 ### 11. Complejidad alta (Compl) — OK
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **2** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 3783 LOC))_
+- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 3997 LOC))_
 
 ### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
 - **Qué mide:** Tamaño de las funciones/métodos y cantidad de parámetros.
 - **Por qué importa:** Una función que hace varias cosas cuesta leerla, nombrarla y reutilizarla.
-- **Tu resultado:** **3** función/método(s) largos o con muchos parámetros _(máximo 10 por 1000 LOC)_
+- **Tu resultado:** **2** función/método(s) largos o con muchos parámetros _(máximo 10 por 1000 LOC)_
 
-### 13. Acoplamiento alto (Acop) — A REVISAR
+### 13. Acoplamiento alto (Acop) — OK
 
 - **Qué mide:** Cuánto depende una unidad de las partes internas de otra.
 - **Por qué importa:** Piezas muy enlazadas hacen que un cambio se propague y que sea difícil reemplazar partes.
-- **Tu resultado:** **21** unidad(es) con acoplamiento alto _(máximo 2 por 1000 LOC)_
-- **Para investigar la causa:**
-    - ¿Las piezas se conocen en detalle entre sí (acceden a campos o estructuras internas)?
-    - ¿El acceso a datos ocurre desde lugares que no son los responsables?
-    - ¿Se puede cambiar una parte sin tocar las demás?
+- **Tu resultado:** **6** unidad(es) con acoplamiento alto _(máximo 2 por 1000 LOC)_
 
 ### 14. Vistas del frontend (Vistas) — OK
 
@@ -142,25 +130,17 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 ## 5. Observaciones y qué falta
 
-Criterios que hoy están en rojo y, para cada uno, una explicación breve de **cómo corregirlo** hasta alcanzar el nivel de aprobación (perfil `exigente`):
-
-| Criterio | Resultado actual | Meta | Brecha | Cómo alcanzarlo |
-|---|---|---|---|---|
-| Índice de calidad de servicios (indice) | índice **22/100** | mínimo 50 | faltan 28 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
-| Baja cohesión (Coh) | **4** unidad(es) con baja cohesión | máximo 0 | 4 clase(s) a separar | Separá la clase en unidades con una sola responsabilidad: si los métodos cambian por motivos distintos, son clases distintas. Meta: 0 clases con baja cohesión. |
-| Acoplamiento alto (Acop) | **21** unidad(es) con acoplamiento alto | máximo 2 por 1000 LOC | 21 hallazgo(s); el máximo para 3,783 LOC es 7.6 | Hacé que cada unidad dependa de una interfaz o de un módulo de servicio, no de los detalles internos de otra; evitá acceder a campos ajenos. Meta: ≤2 por 1000 LOC. |
-
-> Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo. Después de corregir, volvé a correr la medición: el semáforo se recalcula sobre `main`.
+_Cumple **todos** los criterios del semáforo: no hay nada que arreglar para aprobar. El siguiente objetivo es sostenerlo y mejorar duplicación y diseño._
 
 ## 6. Actividad en clase (miércoles y viernes)
 
-> Se consideran las **23 clases** del período (miércoles y viernes; Nov 4 y 6 quedan afuera porque el calendario las marca sin clase). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
+> Se consideran las **23 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
 
 ### Máximo Aznar Massut
 
 **12/23 clases con actividad** · 20 commits · 17 merges
 
-| Fecha | Marca | Repositorios | Commits / merges |
+| Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
 | 2026-08-14 | No | sin actividad | 0 / 0 |
 | 2026-08-19 | No | sin actividad | 0 / 0 |
@@ -188,36 +168,7 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 ## 7. Anexo: dónde mirar
 
-Archivos donde el análisis encontró cada señal en rojo (sin número de línea, a propósito):
-
-**Baja cohesión (Coh)** — 4 archivo(s):
-- `src/app/features/auth/login/login.ts`
-- `src/app/features/auth/register/register.ts`
-- `src/app/features/books/book-detail/book-detail.ts`
-- `src/app/features/books/book-list/book-list.ts`
-
-**Acoplamiento alto (Acop)** — 21 archivo(s):
-- `src/app/core/api/api-error.ts`
-- `src/app/core/services/auth.service.ts`
-- `src/app/core/services/book.service.ts`
-- `src/app/core/services/collection.service.ts`
-- `src/app/core/services/health.service.ts`
-- `src/app/core/services/review.service.ts`
-- `src/app/core/services/token-storage.service.ts`
-- `src/app/features/auth/login/login.ts`
-- `src/app/features/auth/register/register.ts`
-- `src/app/features/auth/session-pending/session-pending.ts`
-- `src/app/features/auth/verify-session/verify-session.ts`
-- `src/app/features/books/book-detail/book-detail.ts`
-- `src/app/features/books/book-form/book-form.ts`
-- `src/app/features/books/book-list/book-list.ts`
-- `src/app/features/collections/collection-detail/collection-detail.ts`
-- `src/app/features/collections/collection-list/collection-list.ts`
-- `src/app/features/reading-tree/reading-tree-page.ts`
-- `src/app/features/reviews/review-list/review-list.ts`
-- `src/app/shared/components/confirm-dialog/confirm-dialog.ts`
-- `src/app/shared/components/star-rating/star-rating.ts`
-- `src/app/shared/pipes/bv-date.pipe.ts`
+_No hay criterios en rojo con archivos asociados._
 
 ---
 _Informe generado por la cátedra. Los umbrales corresponden al perfil `exigente`. Ante dudas, revisá el archivo señalado y el criterio en `CRITERIOS-CALIDAD.md`._
