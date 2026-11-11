@@ -1,6 +1,8 @@
+/** Tarjeta con forma de ventana. */
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+/** Muestra una imagen con título y puede funcionar como enlace del router. */
 @Component({
   selector: 'bv-window-card',
   standalone: true,
@@ -91,6 +93,7 @@ import { RouterLink } from '@angular/router';
   `,
 })
 export class WindowCard {
+  /** título, imagen, texto alternativo, enlace y ancho máximo */
   readonly title = input.required<string>();
   readonly src = input.required<string>();
   readonly alt = input<string>('');

@@ -1,3 +1,4 @@
+/** Servicio de registro e inicio de sesión con contraseña. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -16,10 +17,12 @@ import { ApiEnvelope, ApiUser, LoginRequest, PendingSession, RegisterRequest } f
 export class AccountService {
   private readonly http = inject(HttpClient);
 
+  /** crea la cuenta y devuelve el usuario creado, sin iniciar sesión */
   register(payload: RegisterRequest): Observable<ApiUser> {
     return dataRequest(this.http.post<ApiEnvelope<ApiUser>>(API_ENDPOINTS.auth.register, payload));
   }
 
+  /** valida email y contraseña; el backend responde con la verificación pendiente */
   login(payload: LoginRequest): Observable<PendingSession> {
     return dataRequest(
       this.http.post<ApiEnvelope<PendingSession>>(API_ENDPOINTS.auth.login, payload),

@@ -1,3 +1,4 @@
+/** Operadores de RxJS que usan todos los servicios para leer las respuestas de la API. */
 import {
   MonoTypeOperatorFunction,
   Observable,
@@ -57,4 +58,5 @@ export function messageRequest(request: Observable<ApiMessage>): Observable<stri
   return request.pipe(unwrapMessage(), catchApiError<string>());
 }
 
+/** Se reexporta para que los servicios importen el error y los operadores desde un solo lugar. */
 export { ApiError };

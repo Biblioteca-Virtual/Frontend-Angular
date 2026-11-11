@@ -1,3 +1,4 @@
+/** Direcciones del backend: origen, timeout y la URL de cada endpoint de la API. */
 import { environment } from '@env/environment';
 
 /**

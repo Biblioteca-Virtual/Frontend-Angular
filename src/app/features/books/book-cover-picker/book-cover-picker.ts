@@ -1,3 +1,4 @@
+/** Campo de portada del formulario de libros. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { resolveCoverUrl } from '@core/api/cover-url';
 import { CoverService } from '@core/services/cover.service';
 
+/** Mensaje que se muestra cuando falla la subida. */
 const UPLOAD_ERROR = 'Error al subir la imagen. Verifica que sea JPG, PNG, WEBP o SVG.';
 
 /** Sube la portada del libro al almacenamiento del backend y la previsualiza. */
@@ -23,12 +25,15 @@ export class BookCoverPicker {
   private readonly covers = inject(CoverService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** ruta de la portada y estado de subida, enlazados con el formulario */
   readonly path = model('');
   readonly uploading = model(false);
 
+  /** error de subida y función para armar la url de la vista previa */
   protected readonly uploadError = signal<string | null>(null);
   protected readonly resolveCover = resolveCoverUrl;
 
+  /** sube el archivo elegido y guarda la url que devuelve el backend */
   protected onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) {

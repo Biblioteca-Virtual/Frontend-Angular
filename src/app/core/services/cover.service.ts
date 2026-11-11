@@ -1,3 +1,4 @@
+/** Servicio HTTP para subir portadas. */
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -10,6 +11,7 @@ import { ApiEnvelope } from '@core/models';
 export class CoverService {
   private readonly http = inject(HttpClient);
 
+  /** sube el archivo como formulario y devuelve la url pública de la imagen */
   upload(file: File): Observable<{ url: string; filename: string }> {
     const formData = new FormData();
     formData.append('file', file);

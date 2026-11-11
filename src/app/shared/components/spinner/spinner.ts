@@ -1,3 +1,4 @@
+/** Indicador de carga. */
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**

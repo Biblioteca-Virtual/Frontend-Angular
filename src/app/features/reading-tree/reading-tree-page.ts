@@ -1,3 +1,4 @@
+/** Pantalla del árbol de lectura, que elige al azar el próximo libro a leer. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -36,25 +37,31 @@ export class ReadingTreePage {
   private readonly books = inject(BookService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** dibujo del árbol y función para armar la url de las portadas */
   protected readonly tree = TREE;
   protected readonly coverUrl = resolveCoverUrl;
 
+  /** libros del usuario, sorteo en curso, hoja elegida, libro sorteado y error */
   protected readonly catalog = new AsyncState<ApiBook[]>();
   protected readonly picking = signal(false);
   protected readonly pickedLeaf = signal<number | null>(null);
   protected readonly result = signal<ApiBook | null>(null);
   protected readonly error = signal<ApiError | null>(null);
 
+  /** cantidad de libros sin terminar: una hoja por cada uno */
   protected readonly pendingCount = computed(
     () => (this.catalog.data() ?? []).filter((book) => !book.terminado).length,
   );
 
+  /** hojas que se dibujan en la copa */
   protected readonly leaves = computed(() => leavesFor(this.pendingCount()));
 
+  /** al abrir la pantalla carga los libros para contar los pendientes */
   constructor() {
     void this.catalog.run(this.books.list());
   }
 
+  /** agarra una hoja: pide el sorteo y muestra el libro cuando la hoja termina de caer */
   protected pick(index: number): void {
     if (this.picking()) {
       return;
@@ -83,6 +90,7 @@ export class ReadingTreePage {
       });
   }
 
+  /** vuelve a colgar la hoja para sortear de nuevo */
   protected reset(): void {
     this.result.set(null);
     this.pickedLeaf.set(null);

@@ -1,3 +1,4 @@
+/** Pantalla con el listado de colecciones del usuario. */
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -33,20 +34,25 @@ export class CollectionList {
   private readonly books = inject(BookService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** colecciones del usuario y libros para el selector del alta */
   protected readonly state = new AsyncState<ApiCollection[]>();
   protected readonly catalog = new AsyncState<ApiBook[]>();
 
+  /** formulario de alta abierto, guardado en curso y error */
   protected readonly creating = signal(false);
   protected readonly saving = signal(false);
   protected readonly actionError = signal<ApiError | null>(null);
 
+  /** nombre de la colección nueva y libro opcional para agregarle */
   protected readonly nombre = signal('');
   protected readonly libroId = signal<number | ''>('');
 
+  /** al abrir la pantalla carga las colecciones */
   constructor() {
     void this.state.run(this.collections.list());
   }
 
+  /** abre el alta; los libros se cargan solo la primera vez */
   protected startCreating(): void {
     this.creating.set(true);
     this.actionError.set(null);
@@ -55,6 +61,7 @@ export class CollectionList {
     }
   }
 
+  /** cierra el alta y limpia sus campos */
   protected cancelCreating(): void {
     this.creating.set(false);
     this.nombre.set('');
@@ -62,6 +69,7 @@ export class CollectionList {
     this.actionError.set(null);
   }
 
+  /** crea la colección y, si se eligió un libro, se lo agrega; ante un error recarga el listado */
   protected create(): void {
     const nombre = this.nombre().trim();
     if (!nombre || this.saving()) {

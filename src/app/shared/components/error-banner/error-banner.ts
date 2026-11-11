@@ -1,3 +1,4 @@
+/** Componente que muestra los errores de la API. */
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { ApiError } from '@core/api/api-error';
 
@@ -30,11 +31,14 @@ import { ApiError } from '@core/api/api-error';
   `,
 })
 export class ErrorBanner {
+  /** error a mostrar y título del aviso */
   readonly error = input<ApiError | null>(null);
   readonly heading = input('No se pudo completar la operación');
 
+  /** error actual, usado por los demás valores calculados */
   private readonly apiError = computed(() => this.error());
 
+  /** mensaje principal del error */
   readonly message = computed(() => this.apiError()?.displayMessage ?? '');
 
   /** Lista de errores de validacion, o vacia si el backend no la envio. */

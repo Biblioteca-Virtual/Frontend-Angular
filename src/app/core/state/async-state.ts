@@ -1,3 +1,4 @@
+/** Estado de carga reutilizable: datos, carga en curso y error de una petición. */
 import { Signal, computed, signal } from '@angular/core';
 import { Observable, firstValueFrom } from 'rxjs';
 import { ApiError, toApiError } from '@core/api/api-error';
@@ -19,6 +20,7 @@ import { ApiError, toApiError } from '@core/api/api-error';
  *     }
  */
 export class AsyncState<T> {
+  /** señales internas; afuera solo se exponen en modo lectura */
   private readonly _data = signal<T | null>(null);
   private readonly _loading = signal(false);
   private readonly _error = signal<ApiError | null>(null);
@@ -60,6 +62,7 @@ export class AsyncState<T> {
     this._data.set(value);
   }
 
+  /** vuelve al estado inicial: sin datos, sin error y sin carga */
   reset(): void {
     this._data.set(null);
     this._error.set(null);

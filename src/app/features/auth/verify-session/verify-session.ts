@@ -1,3 +1,4 @@
+/** Pantalla a la que lleva el botón del correo de verificación. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,6 +19,7 @@ import { WindowCard } from '@shared/components/window-card/window-card';
 /** Tiempo que se muestra "¡Sesión verificada!" antes de ir a la biblioteca. */
 const REDIRECT_DELAY_MS = 2500;
 
+/** Error que se muestra cuando el link llega sin token. */
 const invalidLinkError = (): ApiError =>
   new ApiError(400, 'Datos inválidos', ['El link de verificación no es válido']);
 
@@ -40,12 +42,15 @@ export class VerifySession implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** token del link, tomado del query param */
   readonly token = input<string>();
 
+  /** estado de la pantalla: verificando, usuario verificado o error */
   protected readonly verifying = signal(true);
   protected readonly user = signal<ApiUser | null>(null);
   protected readonly error = signal<ApiError | null>(null);
 
+  /** al abrir la pantalla verifica el token; con éxito espera un momento y entra a la biblioteca */
   ngOnInit(): void {
     const token = this.token();
     if (!token) {

@@ -1,3 +1,4 @@
+/** Flujo compartido por login y registro hasta que se verifica la sesión por correo. */
 import { DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
@@ -16,11 +17,13 @@ export class PendingLogin {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** envío en curso y último error, para el botón y el mensaje del formulario */
   readonly submitting = signal(false);
   readonly error = signal<ApiError | null>(null);
   /** Contraseña correcta: se espera la verificación por correo. */
   readonly session = signal<PendingSession | null>(null);
 
+  /** valida el formulario y hace la petición; marca los campos inválidos y evita envíos dobles */
   submit(form: FormGroup, request: () => Observable<PendingSession>): void {
     if (this.session() !== null) {
       return;
@@ -47,10 +50,12 @@ export class PendingLogin {
       });
   }
 
+  /** navega a la url indicada */
   goTo(url: string): void {
     void this.router.navigateByUrl(url);
   }
 
+  /** olvida la sesión pendiente para mostrar de nuevo el formulario */
   reset(): void {
     this.session.set(null);
   }

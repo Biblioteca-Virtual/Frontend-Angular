@@ -1,3 +1,4 @@
+/** Pantalla de detalle de una colección. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -43,30 +44,37 @@ export class CollectionDetail {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** id de la colección, tomado del parámetro de la ruta */
   readonly collectionId = input.required<number | string>();
 
+  /** el id convertido a número */
   readonly numericId = computed(() => Number(this.collectionId()));
 
+  /** colección, libros del usuario, error de una acción, operación en curso y confirmación de borrado */
   protected readonly state = new AsyncState<ApiCollection>();
   protected readonly catalog = new AsyncState<ApiBook[]>();
   protected readonly actionError = signal<ApiError | null>(null);
   protected readonly busy = signal(false);
   protected readonly confirmingDelete = signal(false);
 
+  /** edición del nombre y libro elegido para agregar */
   protected readonly renaming = signal(false);
   protected readonly nombre = signal('');
   protected readonly libroId = signal<number | ''>('');
 
+  /** libros del usuario que todavía no están en la colección */
   protected readonly available = computed(() => {
     const inside = new Set((this.state.data()?.libros ?? []).map((book) => book.id));
     return (this.catalog.data() ?? []).filter((book) => !inside.has(book.id));
   });
 
+  /** portada del primer libro que tenga una, usada como imagen de la colección */
   protected readonly coverUrl = computed(() => {
     const withCover = (this.state.data()?.libros ?? []).find((book) => book.imagen_portada);
     return resolveCoverUrl(withCover?.imagen_portada);
   });
 
+  /** carga la colección cuando cambia el id, y los libros del usuario para el selector */
   constructor() {
     effect(() => {
       const id = this.numericId();
@@ -78,17 +86,20 @@ export class CollectionDetail {
     void this.catalog.run(this.books.list());
   }
 
+  /** abre la edición del nombre con el nombre actual */
   protected startRenaming(collection: ApiCollection): void {
     this.nombre.set(collection.nombre);
     this.actionError.set(null);
     this.renaming.set(true);
   }
 
+  /** cierra la edición del nombre sin guardar */
   protected cancelRenaming(): void {
     this.renaming.set(false);
     this.actionError.set(null);
   }
 
+  /** guarda el nombre nuevo; un nombre vacío no se envía */
   protected rename(): void {
     const nombre = this.nombre().trim();
     if (!nombre) {
@@ -99,6 +110,7 @@ export class CollectionDetail {
     );
   }
 
+  /** agrega el libro elegido a la colección */
   protected addBook(): void {
     const libroId = this.libroId();
     if (libroId === '') {
@@ -107,10 +119,12 @@ export class CollectionDetail {
     this.mutate(this.collections.addBook(this.numericId(), libroId), () => this.libroId.set(''));
   }
 
+  /** saca un libro de la colección */
   protected removeBook(book: ApiBook): void {
     this.mutate(this.collections.removeBook(this.numericId(), book.id));
   }
 
+  /** borra la colección y vuelve al listado */
   protected remove(): void {
     if (this.busy()) {
       return;
@@ -131,6 +145,7 @@ export class CollectionDetail {
       });
   }
 
+  /** ejecuta un cambio sobre la colección y muestra el resultado, evitando operaciones simultáneas */
   private mutate(request: Observable<ApiCollection>, onSuccess?: () => void): void {
     if (this.busy()) {
       return;

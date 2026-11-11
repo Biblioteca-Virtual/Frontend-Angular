@@ -1,3 +1,4 @@
+/** Pantalla de inicio de sesión. */
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -42,14 +43,17 @@ export class Login {
     password: ['', [Validators.required]],
   });
 
+  /** envía email y contraseña; si son correctos se pasa a esperar el correo */
   protected submit(): void {
     this.flow.submit(this.form, () => this.account.login(this.form.getRawValue()));
   }
 
+  /** sesión verificada: vuelve a la página que se quería abrir */
   protected onVerified(): void {
     this.flow.goTo(this.returnUrl);
   }
 
+  /** cancela la espera y limpia la contraseña para volver a intentar */
   protected cancelPending(): void {
     this.flow.reset();
     this.form.controls.password.reset();

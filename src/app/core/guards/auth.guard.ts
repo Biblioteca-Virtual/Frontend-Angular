@@ -1,3 +1,4 @@
+/** Guards del router: deciden si se puede entrar a una ruta según haya sesión o no. */
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';

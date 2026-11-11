@@ -1,3 +1,4 @@
+/** Tipos comunes a todas las respuestas de la API. */
 /**
  * Formatos de fecha que devuelve el backend Flask.
  *

@@ -1,3 +1,4 @@
+/** Tests de la conversión entre el formulario de libros y la API. */
 import { describe, expect, it } from 'vitest';
 import { ApiBook } from '@core/models';
 import { emptyBookForm, toBookFormValue, toBookPayload } from './book-form.model';

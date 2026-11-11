@@ -1,3 +1,4 @@
+/** Selector de autores del formulario de libros. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,11 +15,14 @@ import { ApiAuthor } from '@core/models';
 import { CatalogService } from '@core/services/catalog.service';
 import { AutorNombrePipe } from '@shared/pipes/autor-nombre.pipe';
 
+/** Quita espacios repetidos y en los extremos. */
 const collapseSpaces = (text: string): string => text.replace(/\s+/g, ' ').trim();
 
+/** Clave para comparar autores: nombre completo en minúsculas. */
 const authorKey = (author: ApiAuthor): string =>
   `${author.nombre} ${author.apellido}`.trim().toLowerCase();
 
+/** Devuelve la lista con el autor agregado, sin repetirlo. */
 const withAuthor = (authors: ApiAuthor[], author: ApiAuthor): ApiAuthor[] =>
   authors.some((item) => item.id === author.id) ? authors : [...authors, author];
 
@@ -40,13 +44,16 @@ export class AuthorPicker {
   private readonly catalog = inject(CatalogService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** autores elegidos (enlace en dos sentidos con el formulario) y aviso de error */
   readonly selected = model<ApiAuthor[]>([]);
   readonly failed = output<ApiError | null>();
 
+  /** autores ya cargados, guardado en curso y texto escrito */
   protected readonly known = signal<ApiAuthor[]>([]);
   protected readonly saving = signal(false);
   protected readonly text = signal('');
 
+  /** al crearse carga los autores conocidos; si falla, solo no habrá sugerencias */
   constructor() {
     this.catalog
       .getAuthors()
@@ -54,6 +61,7 @@ export class AuthorPicker {
       .subscribe({ next: (authors) => this.known.set(authors), error: () => undefined });
   }
 
+  /** agrega el autor escrito: usa uno conocido o lo crea en el backend */
   protected add(): void {
     const name = collapseSpaces(this.text());
     if (!name || this.saving()) {
@@ -72,10 +80,12 @@ export class AuthorPicker {
     }
   }
 
+  /** saca un autor de la lista elegida */
   protected remove(id: number): void {
     this.selected.set(this.selected().filter((author) => author.id !== id));
   }
 
+  /** crea el autor nuevo y lo agrega a conocidos y elegidos */
   private create(name: string): void {
     this.saving.set(true);
     this.failed.emit(null);

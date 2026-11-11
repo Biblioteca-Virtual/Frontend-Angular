@@ -1,3 +1,4 @@
+/** Componente de barra de progreso. */
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 /**
@@ -50,9 +51,11 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 export class ProgressBar {
   /** Porcentaje 0-100; los valores fuera de rango se recortan. */
   readonly value = input(0);
+  /** tamaño de la barra y texto para lectores de pantalla */
   readonly size = input<'md' | 'sm'>('md');
   readonly label = input('Progreso de lectura');
 
+  /** porcentaje redondeado y limitado a 0..100 */
   protected readonly clamped = computed(() =>
     Math.min(100, Math.max(0, Math.round(this.value() || 0))),
   );

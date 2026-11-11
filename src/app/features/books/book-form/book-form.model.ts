@@ -1,3 +1,4 @@
+/** Conversión entre los datos del formulario de libros y los de la API. */
 import { ApiAuthor, ApiBook, BookLocation, CreateBookRequest } from '@core/models';
 
 /** Campos del formulario de libro que se editan directamente con `ngModel`. */
@@ -17,6 +18,7 @@ export interface BookFormSelection {
   cover: string;
 }
 
+/** Valores iniciales del formulario en modo alta. */
 export function emptyBookForm(): BookFormValue {
   return {
     titulo: '',
@@ -28,6 +30,7 @@ export function emptyBookForm(): BookFormValue {
   };
 }
 
+/** Pasa un libro de la API a los valores del formulario en modo edición. */
 export function toBookFormValue(book: ApiBook): BookFormValue {
   return {
     titulo: book.titulo,

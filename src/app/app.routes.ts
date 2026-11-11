@@ -1,3 +1,4 @@
+/** Mapa de rutas de la aplicación: qué pantalla se carga en cada URL y cuáles exigen sesión. */
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from '@core/guards/auth.guard';
 

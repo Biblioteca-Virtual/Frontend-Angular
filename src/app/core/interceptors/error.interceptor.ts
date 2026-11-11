@@ -1,3 +1,4 @@
+/** Interceptor HTTP que convierte los errores en `ApiError` y cierra la sesión vencida. */
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
@@ -36,6 +37,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   );
 };
 
+/** Login y registro: un 401 ahí es "contraseña incorrecta", no una sesión vencida. */
 function isAuthEndpoint(url: string): boolean {
   return url.endsWith('/api/auth/login') || url.endsWith('/api/auth/register');
 }

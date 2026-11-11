@@ -1,3 +1,4 @@
+/** Tests de la conversión de respuestas HTTP con error a `ApiError`. */
 import { describe, expect, it } from 'vitest';
 import { ApiError, toApiError } from './api-error';
 import { HttpErrorResponse } from '@angular/common/http';

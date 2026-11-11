@@ -1,11 +1,14 @@
+/** Pipe para mostrar las fechas que envía el backend. */
 import { Pipe, PipeTransform } from '@angular/core';
 import { ApiDate } from '@core/models';
 
+/** Idioma y región usados para formatear. */
 const LOCALE = 'es-ES';
 
 /** Formatos disponibles. Se declara la union antes del Record para no circular. */
 export type BvDateFormat = 'short' | 'long' | 'datetime';
 
+/** Opciones de formato de cada variante del pipe. */
 const FORMATTERS: Record<BvDateFormat, Intl.DateTimeFormatOptions> = {
   /** "25 sept 2026" */
   short: { day: 'numeric', month: 'short', year: 'numeric' },
@@ -40,6 +43,7 @@ const FORMATTERS: Record<BvDateFormat, Intl.DateTimeFormatOptions> = {
  */
 @Pipe({ name: 'bvDate', pure: true })
 export class BvDatePipe implements PipeTransform {
+  /** devuelve la fecha formateada, o un guion si no se puede leer */
   transform(value: ApiDate | Date | null | undefined, format: BvDateFormat = 'long'): string {
     const date = this.parse(value);
     if (date === null) {
@@ -48,6 +52,7 @@ export class BvDatePipe implements PipeTransform {
     return new Intl.DateTimeFormat(LOCALE, FORMATTERS[format]).format(date);
   }
 
+  /** convierte el valor en fecha; devuelve null si está vacío o es inválido */
   private parse(value: ApiDate | Date | null | undefined): Date | null {
     if (value === null || value === undefined || value === '') {
       return null;

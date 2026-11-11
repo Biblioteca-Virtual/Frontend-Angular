@@ -1,3 +1,4 @@
+/** Interceptor HTTP que agrega el token de sesión a las peticiones protegidas. */
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { PROTECTED_PATHS } from '@core/api/api.config';
@@ -31,6 +32,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   );
 };
 
+/** Verdadero si la URL pertenece a una ruta de la API que exige token. */
 function isProtected(url: string): boolean {
   return PROTECTED_PATHS.some((path) => url.includes(path));
 }

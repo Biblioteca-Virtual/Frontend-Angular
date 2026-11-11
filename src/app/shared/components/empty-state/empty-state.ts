@@ -1,3 +1,4 @@
+/** Componente para listas vacías. */
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
@@ -22,6 +23,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   styleUrl: './empty-state.scss',
 })
 export class EmptyState {
+  /** título y descripción opcional del mensaje */
   readonly title = input.required<string>();
   readonly description = input<string | null>(null);
 }

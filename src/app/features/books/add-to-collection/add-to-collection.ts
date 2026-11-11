@@ -1,3 +1,4 @@
+/** Selector para agregar el libro abierto a una de las colecciones del usuario. */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -30,18 +31,22 @@ export class AddToCollection {
   private readonly collectionService = inject(CollectionService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** libro a agregar y aviso de error hacia el componente padre */
   readonly bookId = input.required<number>();
   readonly failed = output<ApiError | null>();
 
   protected readonly collections = new AsyncState<ApiCollection[]>();
+  /** colección elegida, envío en curso y colección donde se agregó por última vez */
   protected readonly collectionId = signal<number | ''>('');
   protected readonly adding = signal(false);
   protected readonly addedTo = signal<ApiCollection | null>(null);
 
+  /** al crearse carga las colecciones del usuario para el selector */
   constructor() {
     void this.collections.run(this.collectionService.list());
   }
 
+  /** agrega el libro a la colección elegida y limpia el selector */
   protected add(): void {
     const collectionId = this.collectionId();
     if (collectionId === '' || this.adding()) {

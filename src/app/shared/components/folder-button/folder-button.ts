@@ -1,7 +1,9 @@
+/** Botón con forma de carpeta. */
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
+/** Puede funcionar como enlace del router o como botón normal. */
 @Component({
   selector: 'bv-folder-button',
   standalone: true,
@@ -139,9 +141,11 @@ import { RouterLink } from '@angular/router';
   `,
 })
 export class FolderButton {
+  /** texto, destino del enlace, tipo de botón y estado deshabilitado */
   readonly label = input.required<string>();
   readonly routerLink = input<string | any[] | null>(null);
   readonly type = input<'button' | 'submit'>('button');
   readonly disabled = input<boolean>(false);
+  /** avisa al padre cuando se hace clic */
   readonly clicked = output<void>();
 }
