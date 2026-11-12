@@ -85,6 +85,20 @@ docker compose -f database/docker-compose.yml up -d
 python run.py
 ```
 
+### Con Docker
+
+El `docker-compose.yml` de `Backend-Flask` levanta base de datos, backend y este
+frontend juntos. Para eso, los dos repos tienen que estar clonados uno al lado del otro:
+
+```bash
+cd ../Backend-Flask
+docker compose up --build -d
+```
+
+La app queda en http://localhost:4200. La imagen de este repo (`Dockerfile`) compila
+Angular con Node y sirve el resultado con nginx (`nginx.conf`). También se puede usar
+sola: `docker build -t ambarly-web .` y `docker run -p 4200:80 ambarly-web`.
+
 ---
 
 ## Arquitectura
